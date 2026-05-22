@@ -1,140 +1,169 @@
-"use client";
-
 import Link from "next/link";
+import Image from "next/image";
+// Using react-icons for all social media logos
 import {
-  FaFacebookF,
-  FaDiscord,
+  FaYoutube,
+  FaTiktok,
+  FaInstagram,
   FaTwitter,
-  FaGithub,
-  FaDribbble,
+  FaWhatsapp,
 } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-r from-[#0f0f0f] via-[#2d2d2d] to-[#4a4a4a] text-white pt-8">
-      <div className="max-w-[1650px] mx-auto px-10">
-        {/* Top Footer */}
-       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 border-b border-zinc-700 pb-7">
-          
-          {/* Resources */}
-          <div className="md:border-r border-zinc-700">
-            <h3 className="text-white font-bold uppercase text-lg mb-8">
-              Resources
-            </h3>
-
-            <div className="flex flex-col gap-3 text-gray-400 text-sm md:text-base">
-              <Link href="/" className="hover:text-white transition">
-                Blog
-              </Link>
-
-              <Link href="/" className="hover:text-white transition">
-                Glossary
-              </Link>
-            </div>
-          </div>
-
-          {/* Get In Touch */}
-          <div className="md:border-r border-zinc-700 md:px-10">
-            <h3 className="text-white font-bold uppercase text-lg mb-4">
-              Get In Touch
-            </h3>
-
-            <div className="flex flex-col gap-6 text-gray-400 text-[18px]">
-              <Link href="/" className="hover:text-white transition">
-                Suggest a product
-              </Link>
-
-              <Link href="/" className="hover:text-white transition">
-                Partnerships
-              </Link>
-
-              <Link href="/" className="hover:text-white transition">
-                About Us
-              </Link>
-
-              <Link href="/" className="hover:text-white transition">
-                Contact Us
-              </Link>
-
-              <Link href="/" className="hover:text-white transition">
-                Editorial guidelines
-              </Link>
-            </div>
-          </div>
-
-          {/* Legal */}
-          <div className="md:border-r border-zinc-700 md:px-10">
-            <h3 className="text-white font-bold uppercase text-lg mb-8">
-              Legal
-            </h3>
-
-            <div className="flex flex-col gap-6 text-gray-400 text-[18px]">
-              <Link href="/" className="hover:text-white transition">
-                Privacy Policy
-              </Link>
-
-              <Link href="/" className="hover:text-white transition">
-                Licensing
-              </Link>
-
-              <Link href="/" className="hover:text-white transition">
-                Terms & Conditions
-              </Link>
-            </div>
-          </div>
-
-          {/* Download */}
-          <div className="md:px-10">
-            <h3 className="text-white font-bold uppercase text-lg mb-8">
-              Download
-            </h3>
-
-            <div className="flex flex-col gap-6 text-gray-400 text-[18px]">
-              <Link href="/" className="hover:text-white transition">
-                iOS
-              </Link>
-
-              <Link href="/" className="hover:text-white transition">
-                Android
-              </Link>
-
-              <Link href="/" className="hover:text-white transition">
-                Windows
-              </Link>
-
-              <Link href="/" className="hover:text-white transition">
-                MacOS
-              </Link>
-            </div>
-          </div>
+    <footer className="bg-[#1a1a1a] text-white pt-16 pb-12 px-6 w-full mt-auto">
+      {/* justify-items-center: Tablet aur Mobile par sab kuch center karega
+        md:justify-items-start: Tab jab md (tablet) screen size aaye, toh left align kar dega
+      */}
+      <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-center md:text-left justify-items-center md:justify-items-start items-center md:items-start">
+        {/* Column 1: Resources */}
+        <div className="flex flex-col gap-4 items-center md:items-start">
+          <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-2">
+            Resources
+          </h4>
+          <Link
+            href="/blog"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            Blog
+          </Link>
+          <Link
+            href="/glossary"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            Glossary
+          </Link>
         </div>
 
-        {/* Bottom Footer */}
-        <div className="flex flex-col md:flex-row items-center justify-between py-5">
-          <p className="text-gray-300 text-lg">
-            © 2025 Compare™. All Rights Reserved.
-          </p>
+        {/* Column 2: Get in Touch */}
+        <div className="flex flex-col gap-4 items-center md:items-start">
+          <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-2">
+            Get in touch
+          </h4>
+          <Link
+            href="/suggest"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            Suggest a product
+          </Link>
+          <Link
+            href="/partnerships"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            Partnerships
+          </Link>
+        </div>
 
-          <div className="flex items-center gap-6 mt-6 md:mt-0 text-2xl text-white">
-            <Link href="/">
-              <FaFacebookF className="hover:scale-110 transition" />
-            </Link>
+        {/* Column 3: Versus */}
+        <div className="flex flex-col gap-4 items-center md:items-start">
+          <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-2">
+            Versus
+          </h4>
+          <Link
+            href="/about"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            About us
+          </Link>
+          <Link
+            href="/guidelines"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            Editorial guidelines
+          </Link>
+        </div>
 
-            <Link href="/">
-              <FaDiscord className="hover:scale-110 transition" />
-            </Link>
+        {/* Column 4: Legal */}
+        <div className="flex flex-col gap-4 items-center md:items-start">
+          <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-2">
+            Legal
+          </h4>
+          <Link
+            href="/imprint"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            Imprint
+          </Link>
+          <Link
+            href="/privacy"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            Privacy
+          </Link>
+          <Link
+            href="/terms"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            Terms
+          </Link>
+          <Link
+            href="/cookies"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            Cookies
+          </Link>
+        </div>
 
-            <Link href="/">
-              <FaTwitter className="hover:scale-110 transition" />
-            </Link>
+        {/* Column 5: Branding & Socials */}
+        {/* Column 5: Branding & Socials */}
+        <div className="flex flex-col gap-4 items-center md:items-start">
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/logo.svg"
+              alt="Versus Logo"
+              width={100}
+              height={30}
+              className="w-auto h-8"
+            />
+          </Link>
+          <p className="text-gray-400 text-sm">Compare everything</p>
 
-            <Link href="/">
-              <FaGithub className="hover:scale-110 transition" />
-            </Link>
-
-            <Link href="/">
-              <FaDribbble className="hover:scale-110 transition" />
-            </Link>
+          <div className="flex items-center gap-4 mt-2">
+            {/* YouTube */}
+            <a
+              href="https://www.youtube.com/@versus_com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <FaYoutube className="w-5 h-5" />
+            </a>
+            {/* TikTok */}
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <FaTiktok className="w-5 h-5" />
+            </a>
+            {/* Instagram */}
+            <a
+              href="https://www.instagram.com/versus_comparisons/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <FaInstagram className="w-5 h-5" />
+            </a>
+            {/* Twitter (X) */}
+            <a
+              href="https://x.com/versus_com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <FaTwitter className="w-5 h-5" />
+            </a>
+            {/* WhatsApp (Aap yahan apna WhatsApp link daal sakte hain) */}
+            <a
+              href="https://wa.me/YOUR_NUMBER"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <FaWhatsapp className="w-5 h-5" />
+            </a>
           </div>
         </div>
       </div>
