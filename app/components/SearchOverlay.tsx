@@ -1,114 +1,322 @@
 "use client";
 
 import { useState } from "react";
-import { X, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { X, ArrowRight, Search } from "lucide-react";
+import { searchProducts } from "../services/productService";
+import { imageUrl } from "../config";
 
 interface SearchOverlayProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
-  // Store the array of input strings. Initialize with one empty input.
+interface Product {
+  _id: string;
+  title: string;
+  thumbnail: string;
+  price: number;
+  currency: string;
+}
+
+const SearchOverlay = ({
+  isOpen,
+  onClose,
+}: SearchOverlayProps) => {
+
+  // Input values
   const [inputs, setInputs] = useState<string[]>([""]);
-  
-  // Maximum items allowed for comparison
+
+  // Search results
+  const [results, setResults] = useState<Product[][]>([[]]);
+
+  // Loading states
+  const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
+
+  // Maximum compare items
   const MAX_ITEMS = 4;
 
-  const handleInputChange = (index: number, value: string) => {
-    const newInputs = [...inputs];
-    newInputs[index] = value;
+  /**
+   * Search products API
+   */
+  const fetchProducts = async (
+    value: string,
+    index: number
+  ) => {
+    try {
 
-    // If user is typing in the last input box, it is not empty, and we haven't reached the limit:
-    // Add a new empty input box dynamically.
-    if (index === newInputs.length - 1 && value.trim() !== "" && newInputs.length < MAX_ITEMS) {
-      newInputs.push("");
+      if (!value.trim()) {
+        const updatedResults = [...results];
+        updatedResults[index] = [];
+        setResults(updatedResults);
+        return;
+      }
+
+      setLoadingIndex(index);
+
+      const response = await searchProducts(value);
+
+      const updatedResults = [...results];
+
+      updatedResults[index] = response?.data || [];
+
+      setResults(updatedResults);
+
+    } catch (error) {
+      console.log("Search error:", error);
+    } finally {
+      setLoadingIndex(null);
     }
-
-    setInputs(newInputs);
   };
 
+  /**
+   * Handle input change
+   */
+  const handleInputChange = async (
+    index: number,
+    value: string
+  ) => {
+
+    const updatedInputs = [...inputs];
+
+    updatedInputs[index] = value;
+
+    // Auto add new input
+    if (
+      index === updatedInputs.length - 1 &&
+      value.trim() !== "" &&
+      updatedInputs.length < MAX_ITEMS
+    ) {
+      updatedInputs.push("");
+
+      setResults((prev) => [...prev, []]);
+    }
+
+    setInputs(updatedInputs);
+
+    // API call
+    await fetchProducts(value, index);
+  };
+
+  /**
+   * Select product
+   */
+  const handleSelectProduct = (
+    index: number,
+    productTitle: string
+  ) => {
+
+    const updatedInputs = [...inputs];
+
+    updatedInputs[index] = productTitle;
+
+    setInputs(updatedInputs);
+
+    // Hide dropdown after selection
+    const updatedResults = [...results];
+
+    updatedResults[index] = [];
+
+    setResults(updatedResults);
+  };
+
+  /**
+   * Remove input
+   */
   const handleRemove = (indexToRemove: number) => {
-    let newInputs = inputs.filter((_, index) => index !== indexToRemove);
-    
-    // Ensure there is always at least one input field on the screen
-    if (newInputs.length === 0) {
-      newInputs = [""];
-    } 
-    // If we removed an item, check if the new last item has text. 
-    // If it does and we are below the limit, spawn a new empty box for the user.
-    else if (newInputs[newInputs.length - 1].trim() !== "" && newInputs.length < MAX_ITEMS) {
-      newInputs.push("");
+
+    let updatedInputs = inputs.filter(
+      (_, index) => index !== indexToRemove
+    );
+
+    let updatedResults = results.filter(
+      (_, index) => index !== indexToRemove
+    );
+
+    // Always keep one input
+    if (updatedInputs.length === 0) {
+      updatedInputs = [""];
+      updatedResults = [[]];
     }
-    
-    setInputs(newInputs);
+
+    // Auto add empty field
+    else if (
+      updatedInputs[updatedInputs.length - 1].trim() !== "" &&
+      updatedInputs.length < MAX_ITEMS
+    ) {
+      updatedInputs.push("");
+      updatedResults.push([]);
+    }
+
+    setInputs(updatedInputs);
+    setResults(updatedResults);
   };
 
-  // Check how many inputs actually have text in them
-  const validItems = inputs.filter((val) => val.trim() !== "");
-  
-  // Disable the compare button if there are less than 2 valid items
+  // Valid compare items
+  const validItems = inputs.filter(
+    (value) => value.trim() !== ""
+  );
+
+  // Disable compare button
   const isCompareDisabled = validItems.length < 2;
 
+  /**
+   * Compare products
+   */
   const handleCompare = () => {
+
     if (isCompareDisabled) return;
-    // Implement your comparison routing logic here
-    console.log("Comparing the following items:", validItems);
+
+    console.log("Compare products:", validItems);
+
+    // Add routing logic here
   };
 
   return (
     <div
       className={`fixed top-[64px] left-0 w-full h-[calc(100vh-64px)] bg-[#1a1a1a]/95 backdrop-blur-sm z-40 overflow-y-auto pb-24 transition-all duration-400 ease-in-out ${
-        isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-5"
+        isOpen
+          ? "opacity-100 visible translate-y-0"
+          : "opacity-0 invisible -translate-y-5"
       }`}
     >
+
       <div className="w-full max-w-[800px] mx-auto px-4 sm:px-6 md:px-8 pt-8 md:pt-16 flex flex-col">
-        
-        {/* Container for the inputs with left padding to make room for the 'vs' line */}
+
+        {/* Input Container */}
         <div className="relative flex flex-col gap-5 pl-8 md:pl-12">
-          
-          {inputs.map((val, index) => {
-            const isLastBox = index === inputs.length - 1;
-            const isMaxReached = inputs.length === MAX_ITEMS && isLastBox;
-            
-            // The compare button always stays on the last rendered row
+
+          {inputs.map((value, index) => {
+
+            const isLastBox =
+              index === inputs.length - 1;
+
+            const isMaxReached =
+              inputs.length === MAX_ITEMS &&
+              isLastBox;
+
             const showCompareBtn = isLastBox;
 
             return (
-              <div key={index} className="relative flex items-center w-full gap-2 md:gap-4 transition-all duration-300 animate-in fade-in slide-in-from-top-4">
-                
-                {/* Vertical Orange Line & VS Badge (Only render for the 2nd item onwards) */}
+              <div
+                key={index}
+                className="relative flex items-start w-full gap-2 md:gap-4 transition-all duration-300 animate-in fade-in slide-in-from-top-4"
+              >
+
+                {/* VS Line */}
                 {index > 0 && (
                   <div className="absolute -left-6 md:-left-9 top-[-10px] flex items-center justify-center w-px h-px">
-                    {/* Orange connector line spanning between the two inputs */}
+
                     <div className="absolute w-px h-[68px] bg-[#f97316]"></div>
-                    {/* White 'vs' Badge */}
+
                     <div className="relative bg-white rounded-full p-[3px] border-[3px] border-[#1a1a1a] flex items-center justify-center z-10">
-                      <span className="text-[#f97316] text-[9px] font-extrabold uppercase tracking-widest leading-none">vs</span>
+
+                      <span className="text-[#f97316] text-[9px] font-extrabold uppercase tracking-widest leading-none">
+                        vs
+                      </span>
+
                     </div>
                   </div>
                 )}
 
-                {/* Search Input Box */}
+                {/* Input + Dropdown */}
                 <div className="relative flex-1">
-                  <input
-                    type="text"
-                    placeholder="Type here to compare"
-                    value={val}
-                    onChange={(e) => handleInputChange(index, e.target.value)}
-                    className="w-full bg-[#eef2f6] text-black placeholder-gray-500 text-sm md:text-base px-4 py-3 md:py-3.5 rounded-lg focus:outline-none shadow-md pr-10"
-                  />
-                  
-                  {/* Remove 'X' Button inside the input */}
-                  {/* Show if it's a completed input OR if it's the 4th box and has text in it */}
-                  {(index < inputs.length - 1 || (isMaxReached && val.trim() !== "")) && (
-                    <button
-                      onClick={() => handleRemove(index)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors p-1"
-                    >
-                      <X className="w-4 h-4 md:w-5 md:h-5" />
-                    </button>
+
+                  {/* Input */}
+                  <div className="relative">
+
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      value={value}
+                      onChange={(e) =>
+                        handleInputChange(
+                          index,
+                          e.target.value
+                        )
+                      }
+                      className="w-full bg-[#eef2f6] text-black placeholder-gray-500 text-sm md:text-base px-4 py-3 md:py-3.5 rounded-lg focus:outline-none shadow-md pr-10"
+                    />
+
+                    {/* Search Icon */}
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+
+                    {/* Remove Button */}
+                    {(index < inputs.length - 1 ||
+                      (isMaxReached &&
+                        value.trim() !== "")) && (
+                      <button
+                        onClick={() =>
+                          handleRemove(index)
+                        }
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors p-1"
+                      >
+                        <X className="w-4 h-4 md:w-5 md:h-5" />
+                      </button>
+                    )}
+
+                  </div>
+
+                  {/* Search Results */}
+                  {results[index]?.length > 0 && (
+
+                    <div className="absolute left-0 top-full mt-2 w-full bg-white rounded-xl shadow-2xl overflow-hidden z-50 max-h-[320px] overflow-y-auto">
+
+                      {results[index].map((product) => (
+
+                        <button
+                          key={product._id}
+                          onClick={() =>
+                            handleSelectProduct(
+                              index,
+                              product.title
+                            )
+                          }
+                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors border-b border-gray-100 text-left"
+                        >
+
+                          {/* Product Image */}
+                          <div className="w-[55px] h-[55px] rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
+
+                            <Image
+                              src={`${imageUrl}${product.thumbnail}`}
+                              alt={product.title}
+                              width={55}
+                              height={55}
+                              className="object-contain"
+                            />
+
+                          </div>
+
+                          {/* Product Info */}
+                          <div className="flex-1">
+
+                            <h4 className="text-sm font-semibold text-black line-clamp-1">
+                              {product.title}
+                            </h4>
+
+                            <p className="text-sm text-gray-500 mt-1">
+                              {product.currency}
+                              {product.price}
+                            </p>
+
+                          </div>
+
+                        </button>
+
+                      ))}
+
+                    </div>
+
                   )}
+
+                  {/* Loading */}
+                  {loadingIndex === index && (
+                    <div className="absolute left-0 top-full mt-2 text-white text-sm">
+                      Searching...
+                    </div>
+                  )}
+
                 </div>
 
                 {/* Compare Button */}
@@ -122,22 +330,30 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                         : "bg-[#f97316] hover:bg-[#ea580c] text-white"
                     }`}
                   >
-                    Compare <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
+
+                    Compare
+
+                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
+
                   </button>
                 )}
+
               </div>
             );
           })}
 
-          {/* Optional Message: Let the user know they hit the limit */}
-          {inputs.length === MAX_ITEMS && inputs[MAX_ITEMS - 1].trim() !== "" && (
-            <div className="text-gray-400 text-sm text-center mt-2 animate-in fade-in duration-300">
-              Maximum of {MAX_ITEMS} items can be compared at once.
-            </div>
-          )}
-          
+          {/* Max Limit Message */}
+          {inputs.length === MAX_ITEMS &&
+            inputs[MAX_ITEMS - 1].trim() !== "" && (
+              <div className="text-gray-400 text-sm text-center mt-2 animate-in fade-in duration-300">
+                Maximum of {MAX_ITEMS} items can be compared at once.
+              </div>
+            )}
+
         </div>
+
       </div>
+
     </div>
   );
 };
