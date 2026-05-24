@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { Home } from "lucide-react";
 import Navbar from "../components/Navbar"; // Ensure this path matches your structure
+import { useEffect } from "react";
+import { getCategories } from "../services/categoryService";
 
 // Mock data matching your screenshot
 const categoryData = [
@@ -31,6 +33,19 @@ const categoryData = [
 ];
 
 export default function CategoriesPage() {
+    useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await getCategories();
+
+      console.log("category",res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="min-h-screen bg-[#e8edf2] flex flex-col font-sans">
       <Navbar />
