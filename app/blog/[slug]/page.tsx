@@ -97,22 +97,7 @@ export default function BlogDetailsPage() {
           </h1>
 
           {/* Author & Action Buttons Row */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-            {/* Author Info */}
-            <div className="flex items-center gap-4">
-              {/* Avatar - Neumorphic Style */}
-              <div className="w-12 h-12 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] flex items-center justify-center overflow-hidden border border-white/50 shrink-0">
-                <User className="w-6 h-6 text-gray-400" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[15px] font-semibold text-gray-800">
-                  By Admin
-                </span>
-                <span className="text-[13px] text-gray-500 font-medium">
-                  12/13/2024
-                </span>
-              </div>
-            </div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">        
 
             {/* Action Buttons Group */}
             <div className="flex flex-wrap items-center gap-3 md:gap-4">

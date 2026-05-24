@@ -10,3 +10,20 @@ export const getCategories = async (start: number = 1, limit: number = 10) => {
     throw error;
   }
 };
+
+export const getSubCategoryWiseProducts = async (
+  uniqueName: string
+) => {
+  try {
+    const response = await apiInstance.get(
+      `/client/subCategory/getSubCategoryWiseProducts?uniqueName=${uniqueName}`
+    );
+
+    console.log("API RESPONSE :", response.data);
+
+    return response.data;
+
+  } catch (error) {
+    throw error;
+  }
+};
