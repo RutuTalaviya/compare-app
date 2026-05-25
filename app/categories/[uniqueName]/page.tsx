@@ -18,6 +18,7 @@ import {
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { getSubCategoryWiseProducts } from "@/app/services/categoryService";
+import FilterSidebar from "@/app/components/FilterSidebar";
 
 // ---------------- TYPES ----------------
 
@@ -119,7 +120,9 @@ export default function SubCategoryUI() {
       fetchProducts();
     }
   }, [uniqueName]);
-
+  const handleFilterChange = (filters: any) => {
+    console.log("Filters Updated:", filters);
+  };
   return (
     <div className="min-h-screen bg-[#eaeff4] flex flex-col">
       {/* Navbar */}
@@ -163,32 +166,9 @@ export default function SubCategoryUI() {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar */}
             {products.length > 0 && (
-            <aside className="w-full lg:w-80 flex-shrink-0">
-              <div className="sticky top-24 bg-[#eaeff4] p-6 rounded-[28px] border border-[#d1d9e6] shadow-[8px_8px_16px_#b8c4d2,-8px_-8px_16px_#ffffff]">
-                {/* Sort */}
-                <h2 className="font-black text-gray-700 mb-4 uppercase tracking-wider text-sm">
-                  Sort By
-                </h2>
-
-                <select className="w-full p-3 rounded-2xl bg-[#eaeff4] border border-[#d1d9e6] shadow-inner mb-8 font-semibold text-sm text-gray-700 outline-none">
-                  <option>Release date</option>
-                  <option>Price Low to High</option>
-                  <option>Price High to Low</option>
-                  <option>Top Rated</option>
-                </select>
-
-                {/* Product Count */}
-                <div className="bg-[#e6e7ee] rounded-3xl p-5 border border-[#d1d9e6] shadow-inner">
-                  <h3 className="text-lg font-black text-gray-700">
-                    {products.length}
-                  </h3>
-
-                  <p className="text-sm text-gray-500 mt-1">
-                    Products Available
-                  </p>
-                </div>
-              </div>
-            </aside>
+              <aside className="w-full lg:w-80 flex-shrink-0">
+                <FilterSidebar onFilterChange={handleFilterChange} />
+              </aside>
             )}
 
             {/* Product Grid */}
@@ -262,7 +242,7 @@ export default function SubCategoryUI() {
 
                             {/* TEXT */}
                             <div className="flex flex-col items-center justify-center z-10">
-                            <span className="text-xs md:text-[11px] font-black text-[#F98A1A] leading-none">
+                              <span className="text-xs md:text-[11px] font-black text-[#F98A1A] leading-none">
                                 {product.scoreValue}
                               </span>
                               <span className="text-[7px] md:text-[8px] font-bold uppercase text-gray-600 mt-1">
@@ -297,7 +277,7 @@ export default function SubCategoryUI() {
                           </h3>
 
                           {/* PRICE */}
-                        <p className="text-[#F98A1A] font-black text-xl md:text-2xl mt-2">
+                          <p className="text-[#F98A1A] font-black text-xl md:text-2xl mt-2">
                             {product.currency}
                             {product.price?.toLocaleString("en-IN")}
                           </p>
@@ -315,7 +295,7 @@ export default function SubCategoryUI() {
                                   className="w-4 h-4 md:w-5 md:h-5 object-contain"
                                 />
 
-                              <span className="text-[#025ca6] text-sm md:text-[15px] font-medium">
+                                <span className="text-[#025ca6] text-sm md:text-[15px] font-medium">
                                   {item.unit}
                                 </span>
                               </div>
