@@ -230,7 +230,6 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                       {results[index].map((product) => (
                         <button
                           key={product._id}
-                          // 6. Yahan par pura 'product' object pass hoga, na ki sirf product.title
                           onClick={() => handleSelectProduct(index, product)}
                           className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors border-b border-gray-100 text-left"
                         >

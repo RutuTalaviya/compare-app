@@ -69,6 +69,11 @@ export default function Home() {
                   >
                     {/* SLOT CARD */}
                     <div
+                      onClick={() => {
+                        if (!product) {
+                          router.push("/quick-compare");
+                        }
+                      }}
                       className={`w-full min-h-[340px] sm:min-h-[360px] xl:h-[380px] rounded-2xl border border-[#d1d9e6] bg-[#e6e7ee] flex flex-col items-center justify-center p-4 sm:p-6 relative transition-all duration-300 ${
                         product
                           ? "shadow-soft cursor-default"
@@ -119,7 +124,10 @@ export default function Home() {
 
             {/* Compare Button */}
             <div className="flex flex-col items-center justify-center mt-10 gap-3">
-              <button className="px-8 py-3.5 text-sm sm:text-base font-black uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center gap-2 bg-[#F98A1A] text-white shadow-soft hover:bg-[#e0740d] active:shadow-inset cursor-pointer">
+              <button
+                onClick={() => router.push("/quick-compare")}
+                className="px-8 py-3.5 text-sm sm:text-base font-black uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center gap-2 bg-[#F98A1A] text-white shadow-soft hover:bg-[#e0740d] active:shadow-inset cursor-pointer"
+              >
                 More Compare
                 <ArrowRight className="h-5 w-5" />
               </button>
