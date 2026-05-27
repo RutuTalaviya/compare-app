@@ -27,3 +27,23 @@ export const getSubCategoryWiseProducts = async (
     throw error;
   }
 };
+
+export const compareProducts = async (
+  uniqueTitle: string
+) => {
+  try {
+
+    const response = await apiInstance.get(
+      `/client/product/compareProduct?uniqueTitle=${uniqueTitle}`
+    );
+
+    console.log("COMPARE API RESPONSE :", response.data);
+
+    return response.data;
+
+  } catch (error) {
+
+    throw error;
+
+  }
+};
