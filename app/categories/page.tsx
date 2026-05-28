@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
 import { getCategories } from "../services/categoryService";
 import { imageUrl } from "../config";
+import Footer from "../components/Footer";
 
 interface SubCategory {
   _id: string;
@@ -34,9 +35,8 @@ export default function CategoriesPage() {
   // Loading state
   const [loading, setLoading] = useState<boolean>(true);
 
-  /**
-   * Fetch categories from API
-   */
+  //  Fetch categories
+
   const fetchCategories = async () => {
     try {
       setLoading(true);
@@ -111,7 +111,7 @@ export default function CategoriesPage() {
                           {category.subCategory.map((sub) => (
                             <Link
                               key={sub._id}
-                              href={`/categories/${sub.uniqueName}`} 
+                              href={`/categories/${sub.uniqueName}`}
                               className="bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] rounded-full px-4 py-2 text-sm text-gray-700 border border-white/40 font-medium hover:bg-gray-200 transition-all"
                             >
                               {sub.name}
@@ -154,131 +154,7 @@ export default function CategoriesPage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#2d2f33] pt-16 pb-12 px-8 w-full">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-bold text-sm tracking-wider uppercase mb-2">
-              Resources
-            </h4>
-
-            <Link
-              href="/blog"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Blog
-            </Link>
-
-            <Link
-              href="/glossary"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Glossary
-            </Link>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-bold text-sm tracking-wider uppercase mb-2">
-              Get in touch
-            </h4>
-
-            <Link
-              href="/suggest"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Suggest a product
-            </Link>
-
-            <Link
-              href="/partnerships"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Partnerships
-            </Link>
-
-            <Link
-              href="/about"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              About Us
-            </Link>
-
-            <Link
-              href="/contact"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Contact Us
-            </Link>
-
-            <Link
-              href="/guidelines"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Editorial guidelines
-            </Link>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-bold text-sm tracking-wider uppercase mb-2">
-              Legal
-            </h4>
-
-            <Link
-              href="/privacy"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Privacy Policy
-            </Link>
-
-            <Link
-              href="/licensing"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Licensing
-            </Link>
-
-            <Link
-              href="/terms"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Terms & Conditions
-            </Link>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-bold text-sm tracking-wider uppercase mb-2">
-              Download
-            </h4>
-
-            <Link
-              href="/ios"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              iOS
-            </Link>
-
-            <Link
-              href="/android"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Android
-            </Link>
-
-            <Link
-              href="/windows"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Windows
-            </Link>
-
-            <Link
-              href="/macos"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              MacOS
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

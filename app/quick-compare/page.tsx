@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import {
   Plus,
   Smartphone,
@@ -9,221 +10,536 @@ import {
   Cpu,
   ChevronDown,
   Home,
+  X,
 } from "lucide-react";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-const tabs = ["Mobile device", "TV", "Refrigerator", "Cameras", "smart phones"];
+import {
+  getCategories,
+  getSubCategoryWiseProducts,
+} from "../services/categoryService";
 
-const subTabs = ["Smartphone", "laptops"];
+// ---------------- TYPES ----------------
 
-const products = [
-  {
-    id: 1,
-    name: "Apple IPhone 17 Pro Max",
-    points: 58,
-    image:
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=800&auto=format&fit=crop",
-    specs: {
-      mobile: 14,
-      camera: 64,
-      battery: "1500mAh",
-      cpu: 64,
-    },
-  },
-  {
-    id: 2,
-    name: "dini",
-    points: 58,
-    image: null,
-    specs: {
-      mobile: 14,
-      camera: 64,
-      battery: "1500mAh",
-      cpu: 64,
-    },
-  },
-  {
-    id: 3,
-    name: "duwhu",
-    points: 58,
-    image:
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=800&auto=format&fit=crop",
-    specs: {
-      mobile: 13,
-      camera: 14,
-      battery: "1500mAh",
-      cpu: 64,
-    },
-  },
-  {
-    id: 4,
-    name: "j uhbh",
-    points: 58,
-    image:
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=800&auto=format&fit=crop",
-    specs: {
-      mobile: 13,
-      camera: 14,
-      battery: "1500mAh",
-      cpu: 64,
-    },
-  },
-];
+interface SubCategory {
+  _id: string;
+  name: string;
+  uniqueName: string;
+}
+
+interface Category {
+  _id: string;
+  name: string;
+  sIcon: string;
+  bIcon: string;
+  subCategory: SubCategory[];
+}
+
+interface FeatureData {
+  featureId: {
+    featureName: string;
+    unit: string;
+  };
+}
+
+interface Product {
+  _id: string;
+  title: string;
+  scoreValue: number;
+  image: string[];
+  thumbnail: string;
+  featureData: FeatureData[];
+  price: number;
+  currency: string;
+}
+
+// ---------------- COMPONENT ----------------
 
 export default function QuickCompare() {
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
+
+  const [selectedSubCategory, setSelectedSubCategory] =
+    useState<SubCategory | null>(null);
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [compareList, setCompareList] = useState<Product[]>([]);
+  const [showCompare, setShowCompare] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleAddToCompare = (product: Product) => {
+    const alreadyExists = compareList.find((item) => item._id === product._id);
+
+    if (alreadyExists) return;
+
+    setCompareList((prev) => [...prev, product]);
+  };
+
+  const handleRemoveFromCompare = (id: string) => {
+    const updatedList = compareList.filter((item) => item._id !== id);
+
+    setCompareList(updatedList);
+  };
+  // ---------------- FETCH CATEGORY ----------------
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await getCategories();
+
+      console.log("CATEGORY RESPONSE :", response);
+
+      // axios response
+      const categoryData = response?.data || [];
+
+      setCategories(categoryData);
+
+      // FIRST CATEGORY SELECT
+      if (categoryData.length > 0) {
+        const firstCategory = categoryData[0];
+
+        setSelectedCategory(firstCategory);
+
+        // FIRST SUBCATEGORY SELECT
+        if (firstCategory.subCategory?.length > 0) {
+          const firstSubCategory = firstCategory.subCategory[0];
+
+          setSelectedSubCategory(firstSubCategory);
+
+          fetchProducts(firstSubCategory.uniqueName);
+        }
+      }
+    } catch (error) {
+      console.log("CATEGORY ERROR :", error);
+    }
+  };
+
+  // ---------------- FETCH PRODUCTS ----------------
+
+  const fetchProducts = async (uniqueName: string) => {
+    try {
+      setLoading(true);
+
+      const response = await getSubCategoryWiseProducts(uniqueName);
+
+      console.log("PRODUCT RESPONSE :", response);
+
+      // IMPORTANT FIX
+      setProducts(response || []);
+      console.log("PRODUCT RESPONSE :", response);
+      console.log("PRODUCT RESPONSE DATA :", response.data);
+    } catch (error) {
+      console.log("PRODUCT ERROR :", error);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddCompare = (product: Product) => {
+    setCompareList((prev) => {
+      const exists = prev.find((p) => p._id === product._id);
+
+      if (exists) return prev;
+
+      return [...prev, product];
+    });
+  };
+
+  const handleRemoveCompare = (id: string) => {
+    setCompareList((prev) => prev.filter((item) => item._id !== id));
+  };
+  // ---------------- CATEGORY CLICK ----------------
+
+  const handleCategoryClick = (category: Category) => {
+    setSelectedCategory(category);
+
+    setProducts([]);
+
+    // AUTO SELECT FIRST SUB CATEGORY
+    if (category.subCategory?.length > 0) {
+      const firstSubCategory = category.subCategory[0];
+
+      setSelectedSubCategory(firstSubCategory);
+
+      fetchProducts(firstSubCategory.uniqueName);
+    } else {
+      setSelectedSubCategory(null);
+    }
+  };
+
+  // ---------------- SUB CATEGORY CLICK ----------------
+
+  const handleSubCategoryClick = (sub: SubCategory) => {
+    setSelectedSubCategory(sub);
+
+    fetchProducts(sub.uniqueName);
+  };
+
   return (
     <>
-      {/* NAVBAR */}
       <Navbar />
 
-      {/* MAIN */}
-      <main className="w-full min-h-screen bg-[#eef0f6] pt-24 sm:pt-28 lg:pt-32 pb-32">
-        {/* OUTER SPACE */}
-        <div className="px-3 sm:px-5 lg:px-8 xl:px-10">
-          {/* MAIN BOX */}
-          <div className="w-full border border-[#d7dbe5] bg-[#eef0f6] rounded-xl overflow-hidden shadow-sm">
+      <main className="min-h-screen bg-[#eef0f5] pt-[85px] sm:pt-[95px] lg:pt-[105px] pb-32">
+        <div className="max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-24">
+          {/* MAIN WRAPPER */}
+          <div className="border border-[#d5d9e3] bg-[#eef0f5] shadow-sm overflow-hidden">
             {/* BREADCRUMB */}
-            <div className="px-4 sm:px-6 lg:px-10 py-4 sm:py-5 border-b border-[#d7dbe5] flex flex-wrap items-center gap-2 text-[14px] sm:text-[15px]">
-              <Home size={15} className="text-gray-500" />
+            <div className="h-auto min-h-[65px] border-b border-[#d5d9e3] flex flex-wrap items-center gap-3 px-4 sm:px-7">
+              <div className="flex items-center gap-3 text-[15px]">
+                <Home size={15} className="text-[#7b8190]" />
 
-              <span className="text-gray-500">Home</span>
+                <span className="text-[#7b8190] font-medium">Home</span>
 
-              <span className="text-gray-400">/</span>
+                <span className="text-[#9ea5b3]">/</span>
 
-              <span className="font-semibold text-black">Quick Compare</span>
+                <span className="font-semibold text-black">Quick Compare</span>
+              </div>
             </div>
 
             {/* CATEGORY */}
-            <div className="px-4 sm:px-6 py-4 border-b border-[#d7dbe5] flex flex-wrap gap-3">
-              {tabs.map((tab, index) => (
+            <div className="border-b border-[#d5d9e3] px-4 sm:px-5 py-3 flex flex-wrap gap-3">
+              {categories.map((category) => (
                 <button
-                  key={index}
-                  className={`px-4 sm:px-6 py-2.5 rounded-full text-sm sm:text-[15px] whitespace-nowrap transition-all duration-300
-                  ${
-                    index === 0
-                      ? "bg-white text-black shadow-[4px_4px_10px_#c8ccd3,-4px_-4px_10px_#ffffff]"
-                      : "bg-[#eef0f6] text-[#4b5563] shadow-[4px_4px_10px_#c8ccd3,-4px_-4px_10px_#ffffff]"
-                  }`}
+                  key={category._id}
+                  onClick={() => handleCategoryClick(category)}
+                  className={`
+                    px-6 py-2.5 rounded-full text-[15px]
+                    transition-all duration-300
+                    border border-[#e7e9ef]
+                    ${
+                      selectedCategory?._id === category._id
+                        ? "bg-white text-black shadow-[4px_4px_10px_#cfd3dc,-4px_-4px_10px_#ffffff]"
+                        : "bg-[#eef0f5] text-[#535b6b] shadow-[4px_4px_10px_#cfd3dc,-4px_-4px_10px_#ffffff]"
+                    }
+                  `}
                 >
-                  {tab}
+                  {category.name}
                 </button>
               ))}
             </div>
 
             {/* SUB CATEGORY */}
-            <div className="px-4 sm:px-6 py-4 border-b border-[#d7dbe5] flex flex-wrap gap-3">
-              {subTabs.map((tab, index) => (
-                <button
-                  key={index}
-                  className={`px-4 sm:px-6 py-2.5 rounded-full text-sm sm:text-[15px] whitespace-nowrap transition-all duration-300
-                  ${
-                    index === 0
-                      ? "bg-white text-black shadow-[4px_4px_10px_#c8ccd3,-4px_-4px_10px_#ffffff]"
-                      : "bg-[#eef0f6] text-[#4b5563] shadow-[4px_4px_10px_#c8ccd3,-4px_-4px_10px_#ffffff]"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+            <div className="border-b border-[#d5d9e3] px-4 sm:px-5 py-3 flex flex-wrap gap-3">
+              {selectedCategory?.subCategory?.length ? (
+                selectedCategory.subCategory.map((sub) => (
+                  <button
+                    key={sub._id}
+                    onClick={() => handleSubCategoryClick(sub)}
+                    className={`
+                      px-6 py-2.5 rounded-full text-[15px]
+                      transition-all duration-300
+                      border border-[#e7e9ef]
+                      ${
+                        selectedSubCategory?._id === sub._id
+                          ? "bg-white text-black shadow-[4px_4px_10px_#cfd3dc,-4px_-4px_10px_#ffffff]"
+                          : "bg-[#eef0f5] text-[#535b6b] shadow-[4px_4px_10px_#cfd3dc,-4px_-4px_10px_#ffffff]"
+                      }
+                    `}
+                  >
+                    {sub.name}
+                  </button>
+                ))
+              ) : (
+                <p className="text-[#7b8190] text-sm">
+                  No sub categories found
+                </p>
+              )}
             </div>
 
             {/* PRODUCTS */}
-            <div className="p-4 sm:p-6 lg:p-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 lg:gap-7">
-                {products.map((product) => (
-                  <div
-                    key={product.id}
-                    className="bg-[#eef0f6] border border-[#d8dce5] rounded-2xl p-4 sm:p-5 relative shadow-[5px_5px_14px_#cfd3dc,-5px_-5px_14px_#ffffff]"
-                  >
-                    {/* POINTS */}
-                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 w-[65px] h-[65px] sm:w-[72px] sm:h-[72px] rounded-full border-[5px] border-[#f98a1a] bg-white flex flex-col items-center justify-center z-10">
-                      <span className="text-[16px] sm:text-[18px] font-black leading-none">
-                        {product.points}
-                      </span>
+            <div className="p-4 sm:p-5 lg:p-7">
+              {loading ? (
+                <div className="text-center py-20 text-lg font-semibold">
+                  Loading...
+                </div>
+              ) : products.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                  {products.map((product) => {
+                    const features = product.featureData || [];
 
-                      <span className="text-[10px] font-bold text-gray-700">
-                        Points
-                      </span>
-                    </div>
+                    return (
+                      <div
+                        key={product._id}
+                        className="
+                          relative
+                          rounded-[18px]
+                          border border-[#d9dde7]
+                          bg-[#eef0f5]
+                          p-4
+                          shadow-[6px_6px_15px_#cfd3dc,-6px_-6px_15px_#ffffff]
+                        "
+                      >
+                        {/* POINTS */}
+                        <div className="absolute top-3 left-3 z-20">
+                          <div className="relative w-[72px] h-[72px] rounded-full bg-white flex flex-col items-center justify-center">
+                            <div className="absolute inset-0 rounded-full border-[5px] border-[#f7901d]" />
 
-                    {/* PLUS BUTTON */}
-                    <button className="absolute top-4 right-4 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#eef0f6] shadow-[4px_4px_10px_#c8ccd3,-4px_-4px_10px_#ffffff] flex items-center justify-center">
-                      <Plus size={24} strokeWidth={2.5} />
-                    </button>
+                            <span className="text-[18px] font-black leading-none">
+                              {product.scoreValue}
+                            </span>
 
-                    {/* IMAGE */}
-                    <div className="w-full h-[240px] sm:h-[300px] lg:h-[320px] bg-white rounded-md flex items-center justify-center overflow-hidden">
-                      {product.image ? (
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="object-contain h-full w-auto"
-                        />
-                      ) : (
-                        <span className="text-gray-400 text-sm sm:text-base text-center px-4">
-                          Image not available
-                        </span>
-                      )}
-                    </div>
+                            <span className="text-[11px] font-bold text-black">
+                              Points
+                            </span>
+                          </div>
+                        </div>
 
-                    {/* TITLE */}
-                    <h2 className="text-[18px] sm:text-[22px] font-semibold mt-5 text-black leading-snug min-h-[56px]">
-                      {product.name}
-                    </h2>
+                        {/* PLUS */}
+                        <button
+                          onClick={() =>
+                            compareList.some((p) => p._id === product._id)
+                              ? handleRemoveCompare(product._id)
+                              : handleAddCompare(product)
+                          }
+                          className="
+                          absolute
+                          top-4
+                          right-4
+                          w-12
+                          h-12
+                          rounded-full
+                          bg-[#eef0f5]
+                          shadow-[4px_4px_10px_#cfd3dc,-4px_-4px_10px_#ffffff]
+                          flex
+                          items-center
+                          justify-center
+                          transition-all
+                        "
+                        >
+                          {compareList.some((p) => p._id === product._id) ? (
+                            <X size={24} className="text-red-500" />
+                          ) : (
+                            <Plus size={28} strokeWidth={2.4} />
+                          )}
+                        </button>
+                        {/* IMAGE */}
+                        <div
+                          className="
+                            mt-5
+                            bg-white
+                            rounded-md
+                            h-[260px]
+                            sm:h-[300px]
+                            flex
+                            items-center
+                            justify-center
+                            overflow-hidden
+                          "
+                        >
+                          <Image
+                            src={
+                              product.image?.[0]?.startsWith("http")
+                                ? product.image[0]
+                                : `https://admin.compareuniverse.com/${product.thumbnail}`
+                            }
+                            alt={product.title}
+                            width={300}
+                            height={300}
+                            className="object-contain h-full w-auto"
+                          />
+                        </div>
 
-                    {/* DIVIDER */}
-                    <div className="w-full h-[1px] bg-[#d6dae3] my-4" />
+                        {/* TITLE */}
+                        <h2
+                          className="
+                            text-[20px]
+                            sm:text-[21px]
+                            font-semibold
+                            text-black
+                            mt-5
+                            leading-[1.35]
+                            min-h-[60px]
+                          "
+                        >
+                          {product.title}
+                        </h2>
 
-                    {/* SPECS */}
-                    <div className="grid grid-cols-2 gap-y-4 gap-x-3 text-[14px] sm:text-[15px] text-[#4b5563]">
-                      <div className="flex items-center gap-2">
-                        <Smartphone size={18} />
-                        <span>{product.specs.mobile}</span>
+                        {/* LINE */}
+                        <div className="w-full h-[1px] bg-[#d8dde8] my-4" />
+
+                        {/* SPECS */}
+                        <div className="grid grid-cols-2 gap-y-5 gap-x-4">
+                          <div className="flex items-center gap-2 text-[#50596b]">
+                            <Smartphone size={19} strokeWidth={2} />
+
+                            <span className="text-[15px]">
+                              {features[0]?.featureId?.unit || "-"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-[#50596b]">
+                            <Camera size={19} strokeWidth={2} />
+
+                            <span className="text-[15px]">
+                              {features[1]?.featureId?.unit || "-"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-[#50596b]">
+                            <BatteryCharging size={19} strokeWidth={2} />
+
+                            <span className="text-[15px]">
+                              {features[2]?.featureId?.unit || "-"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-[#50596b]">
+                            <Cpu size={19} strokeWidth={2} />
+
+                            <span className="text-[15px]">
+                              {features[3]?.featureId?.unit || "-"}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-
-                      <div className="flex items-center gap-2">
-                        <Camera size={18} />
-                        <span>{product.specs.camera}</span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <BatteryCharging size={18} />
-                        <span>{product.specs.battery}</span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <Cpu size={18} />
-                        <span>{product.specs.cpu}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-20 text-[#7b8190] text-lg">
+                  No Products Found
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* STICKY BAR */}
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-[80%] bg-[#f98a1a] text-white px-4 sm:px-8 py-4 flex items-center justify-between shadow-2xl z-50 rounded-t-2xl">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-white text-[#f98a1a] flex items-center justify-center text-xs font-black">
-              VS
+        {compareList.length > 0 && (
+          <div className="fixed bottom-0 left-0 w-full z-50">
+            <div
+              onClick={() => setShowCompare(true)}
+              className="w-[80%] mx-auto bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-2xl px-4 py-3 flex items-center justify-between cursor-pointer rounded-t-2xl"
+            >
+              {/* LEFT */}
+              <div className="flex items-center gap-3">
+                <div className="bg-white text-orange-500 font-black w-9 h-9 flex items-center justify-center rounded-full shadow-md">
+                  VS
+                </div>
+
+                <div>
+                  <p className="font-bold text-sm md:text-base">
+                    Comparison List
+                  </p>
+
+                  <p className="text-xs text-white/90">
+                    {compareList.length} products added
+                  </p>
+                </div>
+              </div>
+
+              {/* PREVIEW */}
+              <div className="hidden md:flex items-center gap-2">
+                {compareList.slice(0, 3).map((item) => (
+                  <div
+                    key={item._id}
+                    className="w-10 h-10 bg-white rounded-lg p-1 shadow-md"
+                  >
+                    <Image
+                      src={
+                        item.image?.[0]?.startsWith("http")
+                          ? item.image[0]
+                          : `https://admin.compareuniverse.com/${item.thumbnail}`
+                      }
+                      alt={item.title}
+                      width={40}
+                      height={40}
+                      className="object-contain w-full h-full"
+                    />
+                  </div>
+                ))}
+
+                {compareList.length > 3 && (
+                  <div className="w-10 h-10 bg-white text-orange-500 font-bold flex items-center justify-center rounded-lg">
+                    +{compareList.length - 3}
+                  </div>
+                )}
+              </div>
             </div>
-
-            <span className="font-semibold text-sm sm:text-base">
-              Comparison list (2)
-            </span>
           </div>
+        )}
+        {showCompare && (
+          <div className="fixed inset-0 bg-black/40 z-50 flex items-end md:items-center justify-center">
+            <div className="w-full md:w-[700px] bg-[#eef0f5] rounded-t-3xl md:rounded-3xl shadow-2xl overflow-hidden">
+              {/* HEADER */}
+              <div className="bg-gradient-to-r from-orange-400 to-orange-500 px-5 py-4 flex items-center justify-between text-white">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white text-orange-500 font-black w-8 h-8 flex items-center justify-center rounded-full text-sm">
+                    VS
+                  </div>
 
-          <button>
-            <ChevronDown size={22} />
-          </button>
-        </div>
+                  <h2 className="font-bold text-lg">
+                    Comparison list ({compareList.length})
+                  </h2>
+                </div>
+
+                <button onClick={() => setShowCompare(false)}>✕</button>
+              </div>
+
+              {/* BODY */}
+              <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+                {compareList.map((item) => (
+                  <div
+                    key={item._id}
+                    className="flex items-center justify-between bg-white rounded-2xl p-3 shadow-md"
+                  >
+                    {/* LEFT */}
+                    <div className="flex items-center gap-3">
+                      <Image
+                        src={
+                          item.image?.[0]?.startsWith("http")
+                            ? item.image[0]
+                            : `https://admin.compareuniverse.com/${item.thumbnail}`
+                        }
+                        alt={item.title}
+                        width={45}
+                        height={45}
+                        className="rounded-lg"
+                      />
+
+                      <div>
+                        <p className="font-bold text-gray-800 line-clamp-1">
+                          {item.title}
+                        </p>
+
+                        <p className="text-sm text-gray-500">
+                          {item.currency}
+                          {item.price}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* REMOVE */}
+                    <button
+                      onClick={() => handleRemoveCompare(item._id)}
+                      className="text-gray-400 hover:text-red-500 text-xl font-bold"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* FOOTER */}
+              <div className="p-4 bg-[#eef0f5]">
+                <button className="w-full bg-white rounded-full py-3 font-bold text-orange-500 shadow-inner hover:scale-[1.01] transition">
+                  Compare ({compareList.length})
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
-      {/* FOOTER */}
       <Footer />
     </>
   );
