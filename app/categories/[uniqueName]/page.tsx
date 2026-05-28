@@ -19,6 +19,7 @@ import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { getSubCategoryWiseProducts } from "@/app/services/categoryService";
 import FilterSidebar from "@/app/components/FilterSidebar";
+import { useRouter } from "next/navigation";
 
 // ---------------- TYPES ----------------
 
@@ -66,7 +67,7 @@ export default function SubCategoryUI() {
   const uniqueName = pathSegments[pathSegments.length - 1];
 
   // ---------------- STATES ----------------
-
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [compareList, setCompareList] = useState<Product[]>([]);
@@ -92,6 +93,18 @@ export default function SubCategoryUI() {
       if (exists) return prev;
       return [...prev, product];
     });
+  };
+
+  const handleCompare = () => {
+    if (compareList.length < 2) {
+      alert("Please add at least 2 products");
+      return;
+    }
+
+    // uniqueTitle comma separated
+    const slug = compareList.map((item) => item.uniqueTitle).join(",");
+
+    router.push(`/compare/${slug}`);
   };
 
   const handleRemoveCompare = (id: string) => {
@@ -443,7 +456,7 @@ export default function SubCategoryUI() {
             <div className="p-4 bg-[#eaeff4]">
               <button
                 className="w-full bg-white rounded-full py-3 font-bold text-orange-500 shadow-inner hover:scale-[1.01] transition"
-                onClick={() => alert("Go to compare page")}
+                onClick={handleCompare}
               >
                 Compare ({compareList.length})
               </button>

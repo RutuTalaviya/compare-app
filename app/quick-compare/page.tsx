@@ -15,6 +15,7 @@ import {
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useRouter } from "next/navigation";
 
 import {
   getCategories,
@@ -47,6 +48,7 @@ interface FeatureData {
 interface Product {
   _id: string;
   title: string;
+  uniqueTitle: string;
   scoreValue: number;
   image: string[];
   thumbnail: string;
@@ -58,8 +60,8 @@ interface Product {
 // ---------------- COMPONENT ----------------
 
 export default function QuickCompare() {
+  const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
-
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
@@ -72,21 +74,17 @@ export default function QuickCompare() {
   const [showCompare, setShowCompare] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleAddToCompare = (product: Product) => {
-    const alreadyExists = compareList.find((item) => item._id === product._id);
-
-    if (alreadyExists) return;
-
-    setCompareList((prev) => [...prev, product]);
-  };
-
-  const handleRemoveFromCompare = (id: string) => {
-    const updatedList = compareList.filter((item) => item._id !== id);
-
-    setCompareList(updatedList);
-  };
   // ---------------- FETCH CATEGORY ----------------
+  const handleCompare = () => {
+    if (compareList.length < 2) {
+      alert("Please add at least 2 products");
+      return;
+    }
 
+    const slug = compareList.map((item) => item.uniqueTitle).join(",");
+
+    router.push(`/compare/${slug}`);
+  };
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -531,7 +529,10 @@ export default function QuickCompare() {
 
               {/* FOOTER */}
               <div className="p-4 bg-[#eef0f5]">
-                <button className="w-full bg-white rounded-full py-3 font-bold text-orange-500 shadow-inner hover:scale-[1.01] transition">
+                <button
+                  onClick={handleCompare}
+                  className="w-full bg-white rounded-full py-3 font-bold text-orange-500 shadow-inner hover:scale-[1.01] transition"
+                >
                   Compare ({compareList.length})
                 </button>
               </div>
