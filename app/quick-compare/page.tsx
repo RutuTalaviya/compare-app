@@ -21,6 +21,7 @@ import {
   getCategories,
   getSubCategoryWiseProducts,
 } from "../services/categoryService";
+import { DangerRight } from "../utils/toast";
 
 // ---------------- TYPES ----------------
 
@@ -77,7 +78,7 @@ export default function QuickCompare() {
   // ---------------- FETCH CATEGORY ----------------
   const handleCompare = () => {
     if (compareList.length < 2) {
-      alert("Please add at least 2 products");
+        DangerRight("Please add at least 2 products");
       return;
     }
 

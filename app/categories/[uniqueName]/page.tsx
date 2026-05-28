@@ -20,6 +20,7 @@ import Footer from "@/app/components/Footer";
 import { getSubCategoryWiseProducts } from "@/app/services/categoryService";
 import FilterSidebar from "@/app/components/FilterSidebar";
 import { useRouter } from "next/navigation";
+import { DangerRight } from "@/app/utils/toast";
 
 // ---------------- TYPES ----------------
 
@@ -97,7 +98,7 @@ export default function SubCategoryUI() {
 
   const handleCompare = () => {
     if (compareList.length < 2) {
-      alert("Please add at least 2 products");
+      DangerRight("Please add at least 2 products");
       return;
     }
 

@@ -2,26 +2,32 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  CATEGORIES,
-  PRODUCTS,
-  BLOG_ARTICLES,
-  Product,
-  Category,
-} from "./data/products";
 import Navbar from "./components/Navbar";
 import { Plus, X, ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import Footer from "./components/Footer";
+import BlogPage from "./blog/page";
+import { getCategories } from "./services/categoryService";
 
 export default function Home() {
   const router = useRouter();
+  const [categories, setCategories] = useState<any[]>([]);
   // UPDATED: Changed from 3 slots to 4 slots
-  const [slots, setSlots] = useState<(Product | null)[]>([
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const slots = [1, 2, 3, 4];
+  const fetchCategories = async () => {
+    try {
+      const response = await getCategories();
+
+      console.log("Categories:", response);
+
+      setCategories(response?.data || []);
+    } catch (error) {
+      console.log("Category Fetch Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <main className="min-h-screen bg-[#e6e7ee] pt-[90px] pb-0 select-none">
@@ -57,11 +63,7 @@ export default function Home() {
           <div className="p-6 md:p-8">
             {/* UPDATED: Flex layout adapted for 4 items (1 col mobile, 2 col tablet, 4 col desktop) */}
             <div className="flex flex-col md:flex-row md:flex-wrap xl:flex-nowrap items-center justify-center gap-6 w-full relative">
-              {slots.map((product, idx) => {
-                const categoryMeta = product
-                  ? CATEGORIES.find((c) => c.uniqueName === product.category)
-                  : null;
-
+              {slots.map((_, idx) => {
                 return (
                   <div
                     key={idx}
@@ -69,16 +71,8 @@ export default function Home() {
                   >
                     {/* SLOT CARD */}
                     <div
-                      onClick={() => {
-                        if (!product) {
-                          router.push("/quick-compare");
-                        }
-                      }}
-                      className={`w-full min-h-[340px] sm:min-h-[360px] xl:h-[380px] rounded-2xl border border-[#d1d9e6] bg-[#e6e7ee] flex flex-col items-center justify-center p-4 sm:p-6 relative transition-all duration-300 ${
-                        product
-                          ? "shadow-soft cursor-default"
-                          : "shadow-inset hover:shadow-soft cursor-pointer group"
-                      }`}
+                      onClick={() => router.push("/quick-compare")}
+                      className="w-full min-h-[340px] sm:min-h-[360px] xl:h-[380px] rounded-2xl border border-[#d1d9e6] bg-[#e6e7ee] flex flex-col items-center justify-center p-4 sm:p-6 relative transition-all duration-300 shadow-inset hover:shadow-soft cursor-pointer group"
                     >
                       {/* EMPTY SLOT */}
                       <div className="h-16 w-16 rounded-full bg-[#e6e7ee] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] group-hover:shadow-[inset_2px_2px_4px_#b8c4d2] flex items-center justify-center border border-[#d1d9e6] transition-shadow duration-300">
@@ -142,6 +136,7 @@ export default function Home() {
               <h3 className="text-base sm:text-lg font-black text-[#313842] flex items-center gap-2">
                 📂 Categories
               </h3>
+
               <button
                 onClick={() => router.push("/categories")}
                 className="text-xs font-black text-[#F98A1A] hover:text-[#e0740d] transition-colors uppercase tracking-wider"
@@ -149,11 +144,12 @@ export default function Home() {
                 See All
               </button>
             </div>
+
             <div className="flex flex-wrap items-center gap-3">
-              {CATEGORIES.map((cat) => (
+              {categories.map((cat) => (
                 <button
-                  key={cat.uniqueName}
-                  onClick={() => router.push(`/categories?c=${cat.uniqueName}`)}
+                  key={cat._id}
+                  onClick={() => router.push(`/categories/${cat.uniqueName}`)}
                   className="px-5 py-2.5 text-xs sm:text-sm font-bold btn-neomorphic"
                 >
                   {cat.name}
@@ -164,46 +160,7 @@ export default function Home() {
 
           {/* Blog / Articles Section */}
           <div className="my-10">
-            <div className="flex items-center gap-2 mb-6">
-              <BookOpen className="h-5.5 w-5.5 text-[#F98A1A]" />
-              <h3 className="text-lg sm:text-xl font-black text-[#313842]">
-                Latest Comparisons & Guides
-              </h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {BLOG_ARTICLES.map((article) => (
-                <div
-                  key={article.id}
-                  onClick={() => router.push(`/blog/${article.uniqueTitle}`)}
-                  className="group cursor-pointer border border-[#d1d9e6] rounded-2xl bg-[#e6e7ee] shadow-soft p-4 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="w-full h-40 overflow-hidden rounded-xl bg-[#e6e7ee] shadow-inset border border-[#d1d9e6] relative mb-3">
-                      {/* fallback image placeholder or actual */}
-                      <img
-                        src={article.thumbnail}
-                        alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                    <span className="text-[9px] font-extrabold text-[#F98A1A] uppercase tracking-widest">
-                      {article.date}
-                    </span>
-                    <h4 className="text-sm font-black text-[#313842] mt-1.5 leading-tight group-hover:text-[#F98A1A] transition-colors">
-                      {article.title}
-                    </h4>
-                    <p className="text-xs text-gray-500 mt-2 line-clamp-3 leading-relaxed">
-                      {article.excerpt}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-1 text-[10px] font-black text-gray-400 group-hover:text-[#F98A1A] transition-colors mt-4 uppercase tracking-wider">
-                    Read Article <ArrowRight className="h-3 w-3" />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <BlogPage showBreadcrumb={false} />
           </div>
         </div>
       </div>
