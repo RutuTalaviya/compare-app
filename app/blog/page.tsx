@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar"; // Ensure this path correctly points to your Navbar
+import Footer from "../components/Footer";
 import { getArticles } from "../services/articleService";
 import { imageUrl } from "../config";
 
@@ -84,10 +85,10 @@ export default function BlogPage({ showBreadcrumb = true, isInline = false }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#e8edf2] font-sans">
+    <div className="min-h-screen bg-[#e8edf2] font-sans flex flex-col">
       <Navbar />
 
-      <main className="pt-28 pb-20 px-5 md:px-8 w-full max-w-[1400px] mx-auto">
+      <main className="flex-grow pt-28 pb-20 px-5 md:px-8 w-full max-w-[1400px] mx-auto">
         {/* Breadcrumb Navigation */}
         {showBreadcrumb && (
           <div className="flex items-center gap-2 text-sm mb-10 tracking-widest uppercase font-medium">
@@ -106,6 +107,8 @@ export default function BlogPage({ showBreadcrumb = true, isInline = false }) {
 
         {blogContent}
       </main>
+
+      <Footer />
     </div>
   );
 }

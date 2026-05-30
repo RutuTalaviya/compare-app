@@ -15,7 +15,7 @@ export default function Home() {
   const slots = [1, 2, 3, 4];
   const fetchCategories = async () => {
     try {
-      const response = await getCategories();
+      const response: any = await getCategories();
 
       console.log("Categories:", response);
 
