@@ -71,7 +71,6 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
     const updatedInputs = [...inputs];
     updatedInputs[index] = value;
 
-    // Agar user wapas type karta hai toh purana selection hata do
     const updatedSelected = [...selectedProducts];
     updatedSelected[index] = null;
 

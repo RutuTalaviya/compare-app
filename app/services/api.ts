@@ -35,7 +35,7 @@ apiInstance.interceptors.response.use(
 
 // 2. Fetch Wrapper Setup (Updated with proper headers)
 const getHeaders = () => ({
-    "key": key, // Yahan key pass ho rahi hai
+    "key": key, 
     "Content-Type": "application/json",
 });
 

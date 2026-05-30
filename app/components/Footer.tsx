@@ -155,7 +155,6 @@ const Footer = () => {
             >
               <FaTwitter className="w-5 h-5" />
             </a>
-            {/* WhatsApp (Aap yahan apna WhatsApp link daal sakte hain) */}
             <a
               href="https://wa.me/YOUR_NUMBER"
               target="_blank"

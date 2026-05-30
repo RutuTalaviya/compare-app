@@ -48,7 +48,6 @@ export default function ComparePage() {
         const response = await compareProducts(uniqueTitles);
         setCompareData(response);
 
-        // API response aane par Default active tabs set kar rahe hain
         if (response?.data?.comparedProducts?.length > 0) {
           setActiveSpecTab(response.data.comparedProducts[0]._id);
 
@@ -243,7 +242,7 @@ export default function ComparePage() {
         <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-between w-full mb-16 md:mb-20">
           {[0, 1, 2, 3].map((index) => {
             const prod = products[index];
-            if (index > 0 && !prod && index >= products.length) return null; // Sirf utne columns dikhao jitne products hain
+            if (index > 0 && !prod && index >= products.length) return null; 
 
             return (
               <React.Fragment key={index}>
