@@ -11,11 +11,11 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1a1a1a] text-white pt-16 pb-12 px-6 w-full mt-auto">
+    <footer className="bg-[#1a1a1a] text-white pt-16 pb-12 w-full mt-auto">
       {/* justify-items-center: Tablet aur Mobile par sab kuch center karega
         md:justify-items-start: Tab jab md (tablet) screen size aaye, toh left align kar dega
       */}
-      <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-center md:text-left justify-items-center md:justify-items-start items-center md:items-start">
+      <div className="max-w-[1400px] mx-auto px-5 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-center md:text-left justify-items-center md:justify-items-start items-center md:items-start">
         {/* Column 1: Resources */}
         <div className="flex flex-col gap-4 items-center md:items-start">
           <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-2">

@@ -1,6 +1,24 @@
 import { apiInstance } from "./api";
 
 /**
+ * Get all articles for admin / client list
+ */
+export const getArticles = async (start: number = 1, limit: number = 100) => {
+  try {
+    const response = await apiInstance.get("/admin/article/get", {
+      params: {
+        start,
+        limit,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
  * Get grouped glossary articles
  */
 export const getGroupedArticles = async () => {

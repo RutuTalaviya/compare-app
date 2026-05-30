@@ -1,8 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Navbar from "../../components/Navbar"; // Ensure this path points to your Navbar component
-import { Globe, Send, User } from "lucide-react";
+import Footer from "../../components/Footer"; // Ensure this path points to your Footer component
+import { Send } from "lucide-react";
+import { getArticleDetails } from "../../services/articleService";
+import { imageUrl } from "../../config";
 
 // Custom SVG component for Facebook
 const FacebookIcon = ({ className }: { className?: string }) => (
@@ -62,11 +67,106 @@ const GoogleIcon = ({ className }: { className?: string }) => (
 );
 
 export default function BlogDetailsPage() {
+  const params = useParams();
+  const slug = params?.slug as string;
+
+  const [article, setArticle] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchArticleDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await getArticleDetails(slug);
+      if (response?.status) {
+        setArticle(response.data);
+      }
+    } catch (error) {
+      console.log("Article details error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (slug) {
+      fetchArticleDetails();
+    }
+  }, [slug]);
+
+  const formatDate = (date: string) => {
+    if (!date) return "";
+    return new Date(date).toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const getPostImageUrl = (thumbnail: string) => {
+    if (!thumbnail) {
+      return "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1400&q=80"; // fallback
+    }
+    if (thumbnail.startsWith("http://") || thumbnail.startsWith("https://")) {
+      return thumbnail;
+    }
+    return `${imageUrl}${thumbnail}`;
+  };
+
+  // Share URLs
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+  const shareText = article?.title || "";
+
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText} ${currentUrl}`)}`;
+  const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(shareText)}`;
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
+  const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(shareText)}`;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#e8edf2] font-sans text-gray-800 flex flex-col">
+        <Navbar />
+        <main className="flex-grow pt-28 px-5 md:px-8 w-full max-w-[1400px] mx-auto pb-16">
+          <div className="animate-pulse">
+            <div className="h-6 bg-gray-300/60 rounded w-1/4 mb-8" />
+            <div className="bg-[#e8edf2] rounded-3xl p-6 md:p-10 shadow-[8px_8px_16px_#cfd6e0,-8px_-8px_16px_#ffffff] border border-white/60">
+              <div className="h-10 bg-gray-300/60 rounded w-3/4 mb-8" />
+              <div className="h-6 bg-gray-300/60 rounded w-1/3 mb-10" />
+              <div className="w-full aspect-[21/9] bg-gray-300/60 rounded-xl mb-10" />
+              <div className="space-y-4">
+                <div className="h-4 bg-gray-300/60 rounded w-full" />
+                <div className="h-4 bg-gray-300/60 rounded w-full" />
+                <div className="h-4 bg-gray-300/60 rounded w-5/6" />
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!article) {
+    return (
+      <div className="min-h-screen bg-[#e8edf2] font-sans text-gray-800 flex flex-col">
+        <Navbar />
+        <main className="flex-grow pt-28 px-5 md:px-8 w-full max-w-[1400px] mx-auto pb-16 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
+            <Link href="/blog" className="text-[#f97316] font-bold hover:underline">
+              Back to Blog
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#e8edf2] font-sans text-gray-800 flex flex-col">
       <Navbar />
 
-      {/* Main Content Area - Increased width to 1400px */}
+      {/* Main Content Area */}
       <main className="flex-grow pt-28 px-5 md:px-8 w-full max-w-[1400px] mx-auto pb-16">
         {/* Breadcrumb Navigation */}
         <div className="flex items-center gap-2 text-sm mb-6 tracking-widest uppercase font-medium">
@@ -84,8 +184,8 @@ export default function BlogDetailsPage() {
             Blogs
           </Link>
           <span className="text-gray-400">/</span>
-          <span className="text-gray-700">
-            What-Is-Community-Tourism-Anyway
+          <span className="text-gray-700 truncate max-w-[300px]">
+            {article.title}
           </span>
         </div>
 
@@ -93,11 +193,14 @@ export default function BlogDetailsPage() {
         <article className="bg-[#e8edf2] rounded-3xl p-6 md:p-10 shadow-[8px_8px_16px_#cfd6e0,-8px_-8px_16px_#ffffff] border border-white/60">
           {/* Blog Title */}
           <h1 className="text-3xl md:text-[42px] font-extrabold text-[#0a192f] leading-tight mb-8">
-            What is Community Tourism Anyway?
+            {article.title}
           </h1>
 
           {/* Author & Action Buttons Row */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">        
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            <div className="text-sm font-semibold text-gray-500">
+              Published on {formatDate(article.createdAt)}
+            </div>
 
             {/* Action Buttons Group */}
             <div className="flex flex-wrap items-center gap-3 md:gap-4">
@@ -106,61 +209,52 @@ export default function BlogDetailsPage() {
                 Google preferred
               </button>
 
-              <button className="flex items-center gap-2 px-4 py-2 bg-[#e8edf2] rounded-full shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all border border-white/40 text-xs sm:text-sm font-semibold text-gray-700">
+              <a
+                href="https://whatsapp.com/channel/..."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-[#e8edf2] rounded-full shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all border border-white/40 text-xs sm:text-sm font-semibold text-gray-700"
+              >
                 <WhatsAppIcon className="w-4 h-4 text-[#25D366]" />
                 Join WhatsApp channel
-              </button>
+              </a>
 
-              <button className="flex items-center gap-2 px-4 py-2 bg-[#e8edf2] rounded-full shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all border border-white/40 text-xs sm:text-sm font-semibold text-gray-700">
+              <a
+                href="https://t.me/..."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-[#e8edf2] rounded-full shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all border border-white/40 text-xs sm:text-sm font-semibold text-gray-700"
+              >
                 <Send className="w-4 h-4 text-[#0088cc]" />
                 Join Telegram channel
-              </button>
+              </a>
             </div>
           </div>
 
-          {/* Hero Image Container - Inset Shadow Wrapper */}
-          <div className="w-full rounded-2xl bg-[#e8edf2] shadow-[inset_4px_4px_8px_#cfd6e0,inset_-4px_-4px_8px_#ffffff] p-2 md:p-3 mb-10">
-            <img
-              src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1400&q=80"
-              alt="Community Tourism"
-              className="w-full h-auto max-h-[600px] object-cover rounded-xl"
-            />
-          </div>
+          {/* Hero Image Container */}
+          {article.thumbnail && (
+            <div className="w-full rounded-2xl bg-[#e8edf2] shadow-[inset_4px_4px_8px_#cfd6e0,inset_-4px_-4px_8px_#ffffff] p-2 md:p-3 mb-10">
+              <img
+                src={getPostImageUrl(article.thumbnail)}
+                alt={article.title}
+                className="w-full h-auto max-h-[600px] object-cover rounded-xl"
+              />
+            </div>
+          )}
 
           {/* Blog Content */}
-          <div className="space-y-6 text-[15px] sm:text-base text-gray-800 leading-relaxed font-medium">
-            <p>
-              In my early days of travelling, circa 2011, I serendipitously
-              landed up in a remote, rural, agricultural village in North
-              Kerala, surrounded by rice fields, bamboo forests and mist-clad
-              hills. There I learnt that local families took turns to host
-              travellers like me in their homes, and local guides took turns to
-              lead walks and other activities.
-            </p>
-            <p>
-              The majority of the money I paid went to the host families and
-              guides, but a small percentage was channeled into a 'village
-              development fund.' The entire village voted to decide how that
-              money was to be used — from setting up eco-friendly infrastructure
-              to upgrading the school to ensuring water security for
-              agriculture. This way, tourism in the village — facilitated by
-              Kabani — not just benefitted one or two enterprising individuals,
-              but the entire community.
-            </p>
-            <p className="italic border-l-4 border-gray-400 pl-4 my-8 text-gray-600">
-              I didn't know it then, but this is what is known in the tourism
-              industry as community tourism or CBT, short for community based
-              tourism.
-            </p>
-            <p>
-              In the years since, I have actively sought out community tourism
-              initiatives around the world. From Thailand to Peru, this has
-              allowed me to spend time with local communities and experience
-              their way of life, while also ensuring that the money I spend as a
-              traveller can be spread out to have a positive impact on the
-              people and places I visit.
-            </p>
-          </div>
+          <div
+            className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[15px] sm:text-base text-gray-800 leading-relaxed font-medium space-y-6
+              prose-headings:text-[#0a192f] prose-headings:font-black
+              prose-p:text-gray-700 prose-p:leading-[2]
+              prose-img:rounded-2xl prose-img:shadow-lg
+              prose-a:text-[#2563eb]
+              prose-strong:text-black
+              prose-blockquote:border-l-[#f97316] prose-blockquote:text-gray-700"
+            dangerouslySetInnerHTML={{
+              __html: article.content || "",
+            }}
+          />
         </article>
 
         {/* Share Section */}
@@ -169,140 +263,45 @@ export default function BlogDetailsPage() {
             Share:
           </span>
 
-          <button className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#25D366]">
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#25D366]"
+          >
             <WhatsAppIcon className="w-5 h-5" />
-          </button>
+          </a>
 
-          <button className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#0088cc]">
+          <a
+            href={telegramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#0088cc]"
+          >
             <Send className="w-4 h-4" />
-          </button>
+          </a>
 
-          <button className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#1877F2]">
+          <a
+            href={facebookUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#1877F2]"
+          >
             <FacebookIcon className="w-4 h-4" />
-          </button>
+          </a>
 
-          <button className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#1DA1F2]">
+          <a
+            href={twitterUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#1DA1F2]"
+          >
             <TwitterIcon className="w-4 h-4" />
-          </button>
+          </a>
         </div>
       </main>
 
-      {/* Dark Footer Section */}
-      <footer className="bg-[#2d2f33] pt-16 pb-12 px-8 w-full mt-auto">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          {/* Column 1 */}
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-bold text-sm tracking-wider uppercase mb-2">
-              Resources
-            </h4>
-            <Link
-              href="/blog"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Blog
-            </Link>
-            <Link
-              href="/glossary"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Glossary
-            </Link>
-          </div>
-
-          {/* Column 2 */}
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-bold text-sm tracking-wider uppercase mb-2">
-              Get in touch
-            </h4>
-            <Link
-              href="/suggest"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Suggest a product
-            </Link>
-            <Link
-              href="/partnerships"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Partnerships
-            </Link>
-            <Link
-              href="/about"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              About Us
-            </Link>
-            <Link
-              href="/contact"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Contact Us
-            </Link>
-            <Link
-              href="/guidelines"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Editorial guidelines
-            </Link>
-          </div>
-
-          {/* Column 3 */}
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-bold text-sm tracking-wider uppercase mb-2">
-              Legal
-            </h4>
-            <Link
-              href="/privacy"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="/licensing"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Licensing
-            </Link>
-            <Link
-              href="/terms"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Terms & Conditions
-            </Link>
-          </div>
-
-          {/* Column 4 */}
-          <div className="flex flex-col gap-4">
-            <h4 className="text-white font-bold text-sm tracking-wider uppercase mb-2">
-              Download
-            </h4>
-            <Link
-              href="/ios"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              iOS
-            </Link>
-            <Link
-              href="/android"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Android
-            </Link>
-            <Link
-              href="/windows"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              Windows
-            </Link>
-            <Link
-              href="/macos"
-              className="text-gray-400 hover:text-white text-[15px] transition-colors"
-            >
-              MacOS
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

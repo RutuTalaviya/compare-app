@@ -33,9 +33,9 @@ export default function Home() {
     <main className="min-h-screen bg-[#e6e7ee] pt-[90px] pb-0 select-none">
       <Navbar />
 
-      <div className="max-w-[1400px] mx-auto px-4 md:px-6">
+      <div className="max-w-[1400px] mx-auto px-5 lg:px-8">
         {/* Banner advertisement layout */}
-        <div className="mb-12 max-w-[1280px] mx-auto">
+        <div className="mb-12 w-full">
           <div className="w-full h-24 sm:h-32 md:h-40 rounded-2xl bg-[#e6e7ee] shadow-[inset_4px_4px_8px_#b8c4d2,_inset_-4px_-4px_8px_#ffffff] border border-[#d1d9e6] flex flex-col items-center justify-center p-6 text-center">
             <span className="text-xs uppercase font-extrabold tracking-widest text-[#F98A1A] mb-1 flex items-center gap-1">
               <Sparkles className="h-3.5 w-3.5 fill-[#F98A1A]" /> Comparison Hub
@@ -129,7 +129,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="max-w-[1280px] mx-auto">
+        <div className="w-full">
           {/* Categories Quick Filter Pill Buttons */}
           <div className="my-10 border border-[#d1d9e6] rounded-2xl bg-[#e6e7ee] shadow-soft p-5 px-6">
             <div className="flex items-center justify-between border-b border-gray-300 pb-3 mb-5">
@@ -160,7 +160,7 @@ export default function Home() {
 
           {/* Blog / Articles Section */}
           <div className="my-10">
-            <BlogPage showBreadcrumb={false} />
+            <BlogPage showBreadcrumb={false} isInline={true} />
           </div>
         </div>
       </div>
