@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Home,
   X,
+  ChevronRight,
 } from "lucide-react";
 
 import Navbar from "../components/Navbar";
@@ -22,8 +23,6 @@ import {
   getSubCategoryWiseProducts,
 } from "../services/categoryService";
 import { DangerRight } from "../utils/toast";
-
-// ---------------- TYPES ----------------
 
 interface SubCategory {
   _id: string;
@@ -58,34 +57,28 @@ interface Product {
   currency: string;
 }
 
-// ---------------- COMPONENT ----------------
-
 export default function QuickCompare() {
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
-
   const [selectedSubCategory, setSelectedSubCategory] =
     useState<SubCategory | null>(null);
-
   const [products, setProducts] = useState<Product[]>([]);
   const [compareList, setCompareList] = useState<Product[]>([]);
   const [showCompare, setShowCompare] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // ---------------- FETCH CATEGORY ----------------
   const handleCompare = () => {
     if (compareList.length < 2) {
-        DangerRight("Please add at least 2 products");
+      DangerRight("Please add at least 2 products");
       return;
     }
-
     const slug = compareList.map((item) => item.uniqueTitle).join(",");
-
     router.push(`/compare/${slug}`);
   };
+
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -93,26 +86,15 @@ export default function QuickCompare() {
   const fetchCategories = async () => {
     try {
       const response = await getCategories();
-
       console.log("CATEGORY RESPONSE :", response);
-
-      // axios response
       const categoryData = response?.data || [];
-
       setCategories(categoryData);
-
-      // FIRST CATEGORY SELECT
       if (categoryData.length > 0) {
         const firstCategory = categoryData[0];
-
         setSelectedCategory(firstCategory);
-
-        // FIRST SUBCATEGORY SELECT
         if (firstCategory.subCategory?.length > 0) {
           const firstSubCategory = firstCategory.subCategory[0];
-
           setSelectedSubCategory(firstSubCategory);
-
           fetchProducts(firstSubCategory.uniqueName);
         }
       }
@@ -121,20 +103,12 @@ export default function QuickCompare() {
     }
   };
 
-  // ---------------- FETCH PRODUCTS ----------------
-
   const fetchProducts = async (uniqueName: string) => {
     try {
       setLoading(true);
-
       const response = await getSubCategoryWiseProducts(uniqueName);
-
       console.log("PRODUCT RESPONSE :", response);
-
-      // IMPORTANT FIX
       setProducts(response || []);
-      console.log("PRODUCT RESPONSE :", response);
-      console.log("PRODUCT RESPONSE DATA :", response.data);
     } catch (error) {
       console.log("PRODUCT ERROR :", error);
       setProducts([]);
@@ -146,9 +120,7 @@ export default function QuickCompare() {
   const handleAddCompare = (product: Product) => {
     setCompareList((prev) => {
       const exists = prev.find((p) => p._id === product._id);
-
       if (exists) return prev;
-
       return [...prev, product];
     });
   };
@@ -156,245 +128,237 @@ export default function QuickCompare() {
   const handleRemoveCompare = (id: string) => {
     setCompareList((prev) => prev.filter((item) => item._id !== id));
   };
-  // ---------------- CATEGORY CLICK ----------------
 
   const handleCategoryClick = (category: Category) => {
     setSelectedCategory(category);
-
     setProducts([]);
-
-    // AUTO SELECT FIRST SUB CATEGORY
     if (category.subCategory?.length > 0) {
       const firstSubCategory = category.subCategory[0];
-
       setSelectedSubCategory(firstSubCategory);
-
       fetchProducts(firstSubCategory.uniqueName);
     } else {
       setSelectedSubCategory(null);
     }
   };
 
-  // ---------------- SUB CATEGORY CLICK ----------------
-
   const handleSubCategoryClick = (sub: SubCategory) => {
     setSelectedSubCategory(sub);
-
     fetchProducts(sub.uniqueName);
+  };
+
+  const getImageSrc = (product: Product) => {
+    if (product.image?.[0]?.startsWith("http")) return product.image[0];
+    return `https://admin.compareuniverse.com/${product.thumbnail}`;
   };
 
   return (
     <>
       <Navbar />
 
-      <main className="min-h-screen bg-[#eef0f5] pt-[85px] sm:pt-[95px] lg:pt-[105px] pb-32">
-        <div className="max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-24">
-          {/* MAIN WRAPPER */}
-          <div className="border border-[#d5d9e3] bg-[#eef0f5] shadow-sm overflow-hidden">
+      <main className="min-h-screen bg-[#e6e7ee] pt-[85px] sm:pt-[95px] lg:pt-[105px] pb-32">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-20">
+          {/* OUTER NEOMORPHIC CONTAINER */}
+          <div className="bg-[#e6e7ee] rounded-2xl border border-[#d1d9e6] shadow-[inset_6px_6px_12px_#b8c4d2,inset_-6px_-6px_12px_#ffffff] overflow-hidden">
             {/* BREADCRUMB */}
-            <div className="h-auto min-h-[65px] border-b border-[#d5d9e3] flex flex-wrap items-center gap-3 px-4 sm:px-7">
-              <div className="flex items-center gap-3 text-[15px]">
-                <Home size={15} className="text-[#7b8190]" />
-
-                <span className="text-[#7b8190] font-medium">Home</span>
-
-                <span className="text-[#9ea5b3]">/</span>
-
-                <span className="font-semibold text-black">Quick Compare</span>
+            <div className="min-h-[60px] border-b border-[#d1d9e6] flex flex-wrap items-center gap-2 px-4 sm:px-7 py-3">
+              <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
+                <Home size={15} className="text-gray-400" />
+                <span
+                  className="hover:text-[#F98A1A] cursor-pointer transition-colors"
+                  onClick={() => router.push("/")}
+                >
+                  Home
+                </span>
+                <ChevronRight size={14} className="text-gray-400" />
+                <span className="font-black text-[#313842]">Quick Compare</span>
               </div>
             </div>
 
-            {/* CATEGORY */}
-            <div className="border-b border-[#d5d9e3] px-4 sm:px-5 py-3 flex flex-wrap gap-3">
+            {/* CATEGORY TABS */}
+            <div className="border-b border-[#d1d9e6] px-4 sm:px-6 py-4 flex flex-wrap gap-3">
               {categories.map((category) => (
                 <button
                   key={category._id}
                   onClick={() => handleCategoryClick(category)}
-                  className={`
-                    px-6 py-2.5 rounded-full text-[15px]
-                    transition-all duration-300
-                    border border-[#e7e9ef]
-                    ${
-                      selectedCategory?._id === category._id
-                        ? "bg-white text-black shadow-[4px_4px_10px_#cfd3dc,-4px_-4px_10px_#ffffff]"
-                        : "bg-[#eef0f5] text-[#535b6b] shadow-[4px_4px_10px_#cfd3dc,-4px_-4px_10px_#ffffff]"
-                    }
-                  `}
+                  className={`px-5 py-2.5 rounded-xl text-sm font-bold border border-[#d1d9e6] transition-all duration-300 cursor-pointer ${
+                    selectedCategory?._id === category._id
+                      ? "bg-[#e6e7ee] text-[#F98A1A] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
+                      : "bg-[#e6e7ee] text-[#555f6e] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[5px_5px_10px_#b8c4d2,_-5px_-5px_10px_#ffffff]"
+                  }`}
                 >
                   {category.name}
                 </button>
               ))}
             </div>
 
-            {/* SUB CATEGORY */}
-            <div className="border-b border-[#d5d9e3] px-4 sm:px-5 py-3 flex flex-wrap gap-3">
+            {/* SUB CATEGORY TABS */}
+            <div className="border-b border-[#d1d9e6] px-4 sm:px-6 py-4 flex flex-wrap gap-3">
               {selectedCategory?.subCategory?.length ? (
                 selectedCategory.subCategory.map((sub) => (
                   <button
                     key={sub._id}
                     onClick={() => handleSubCategoryClick(sub)}
-                    className={`
-                      px-6 py-2.5 rounded-full text-[15px]
-                      transition-all duration-300
-                      border border-[#e7e9ef]
-                      ${
-                        selectedSubCategory?._id === sub._id
-                          ? "bg-white text-black shadow-[4px_4px_10px_#cfd3dc,-4px_-4px_10px_#ffffff]"
-                          : "bg-[#eef0f5] text-[#535b6b] shadow-[4px_4px_10px_#cfd3dc,-4px_-4px_10px_#ffffff]"
-                      }
-                    `}
+                    className={`px-5 py-2 rounded-xl text-xs font-bold border border-[#d1d9e6] transition-all duration-300 cursor-pointer ${
+                      selectedSubCategory?._id === sub._id
+                        ? "bg-[#e6e7ee] text-[#F98A1A] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
+                        : "bg-[#e6e7ee] text-[#555f6e] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[5px_5px_10px_#b8c4d2,_-5px_-5px_10px_#ffffff]"
+                    }`}
                   >
                     {sub.name}
                   </button>
                 ))
               ) : (
-                <p className="text-[#7b8190] text-sm">
+                <p className="text-gray-400 text-sm italic">
                   No sub categories found
                 </p>
               )}
             </div>
 
-            {/* PRODUCTS */}
-            <div className="p-4 sm:p-5 lg:p-7">
+            {/* PRODUCTS GRID */}
+            <div className="p-4 sm:p-6 lg:p-8">
               {loading ? (
-                <div className="text-center py-20 text-lg font-semibold">
-                  Loading...
+                <div className="flex items-center justify-center py-24">
+                  <div className="w-12 h-12 rounded-full border-4 border-[#d1d9e6] border-t-[#F98A1A] animate-spin shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff]" />
                 </div>
               ) : products.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                   {products.map((product) => {
                     const features = product.featureData || [];
+                    const isInCompare = compareList.some(
+                      (p) => p._id === product._id,
+                    );
+
+                    // Score circle
+                    const radius = 24;
+                    const circumference = 2 * Math.PI * radius;
+                    const progress = Math.min(
+                      (product.scoreValue || 0) / 100,
+                      1,
+                    );
+                    const strokeDashoffset =
+                      circumference - progress * circumference;
 
                     return (
                       <div
                         key={product._id}
-                        className="
-                          relative
-                          rounded-[18px]
-                          border border-[#d9dde7]
-                          bg-[#eef0f5]
-                          p-4
-                          shadow-[6px_6px_15px_#cfd3dc,-6px_-6px_15px_#ffffff]
-                        "
+                        className="relative bg-[#e6e7ee] rounded-2xl border border-[#d1d9e6] shadow-[6px_6px_14px_#b8c4d2,_-6px_-6px_14px_#ffffff] hover:shadow-[8px_8px_18px_#b8c4d2,_-8px_-8px_18px_#ffffff] p-4 transition-all duration-300"
                       >
-                        {/* POINTS */}
-                        <div className="absolute top-3 left-3 z-20">
-                          <div className="relative w-[72px] h-[72px] rounded-full bg-white flex flex-col items-center justify-center">
-                            <div className="absolute inset-0 rounded-full border-[5px] border-[#f7901d]" />
-
-                            <span className="text-[18px] font-black leading-none">
+                        {/* SCORE BADGE */}
+                        <div className="absolute -top-4 -left-4 z-20">
+                          <div className="w-16 h-16 bg-[#e6e7ee] rounded-full border border-[#d1d9e6] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] flex flex-col items-center justify-center relative">
+                            <svg height="64" width="64" className="absolute">
+                              <circle
+                                stroke="#d1d9e6"
+                                fill="transparent"
+                                strokeWidth={4}
+                                r={radius}
+                                cx={32}
+                                cy={32}
+                              />
+                              <circle
+                                stroke="#F98A1A"
+                                fill="transparent"
+                                strokeWidth={4}
+                                strokeLinecap="round"
+                                r={radius}
+                                cx={32}
+                                cy={32}
+                                strokeDasharray={circumference}
+                                strokeDashoffset={strokeDashoffset}
+                                transform="rotate(-90 32 32)"
+                              />
+                            </svg>
+                            <span className="text-sm font-black text-[#F98A1A] leading-none z-10">
                               {product.scoreValue}
                             </span>
-
-                            <span className="text-[11px] font-bold text-black">
+                            <span className="text-[8px] font-bold uppercase text-gray-500 z-10">
                               Points
                             </span>
                           </div>
                         </div>
 
-                        {/* PLUS */}
+                        {/* PLUS / REMOVE BUTTON */}
                         <button
                           onClick={() =>
-                            compareList.some((p) => p._id === product._id)
+                            isInCompare
                               ? handleRemoveCompare(product._id)
                               : handleAddCompare(product)
                           }
-                          className="
-                          absolute
-                          top-4
-                          right-4
-                          w-12
-                          h-12
-                          rounded-full
-                          bg-[#eef0f5]
-                          shadow-[4px_4px_10px_#cfd3dc,-4px_-4px_10px_#ffffff]
-                          flex
-                          items-center
-                          justify-center
-                          transition-all
-                        "
+                          className={`absolute top-3 right-3 w-11 h-11 rounded-full border border-[#d1d9e6] flex items-center justify-center transition-all duration-300 ${
+                            isInCompare
+                              ? "bg-[#e6e7ee] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
+                              : "bg-[#e6e7ee] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] hover:shadow-[6px_6px_12px_#b8c4d2,_-6px_-6px_12px_#ffffff]"
+                          }`}
                         >
-                          {compareList.some((p) => p._id === product._id) ? (
-                            <X size={24} className="text-red-500" />
+                          {isInCompare ? (
+                            <X size={20} className="text-red-500" />
                           ) : (
-                            <Plus size={28} strokeWidth={2.4} />
+                            <Plus
+                              size={22}
+                              className="text-[#313842]"
+                              strokeWidth={2.4}
+                            />
                           )}
                         </button>
-                        {/* IMAGE */}
-                        <div
-                          className="
-                            mt-5
-                            bg-white
-                            rounded-md
-                            h-[260px]
-                            sm:h-[300px]
-                            flex
-                            items-center
-                            justify-center
-                            overflow-hidden
-                          "
-                        >
+
+                        {/* PRODUCT IMAGE */}
+                        <div className="mt-6 bg-[#e6e7ee] rounded-2xl border border-[#d1d9e6] shadow-[inset_4px_4px_8px_#b8c4d2,_inset_-4px_-4px_8px_#ffffff] h-[240px] sm:h-[280px] flex items-center justify-center overflow-hidden">
                           <Image
-                            src={
-                              product.image?.[0]?.startsWith("http")
-                                ? product.image[0]
-                                : `https://admin.compareuniverse.com/${product.thumbnail}`
-                            }
+                            src={getImageSrc(product)}
                             alt={product.title}
-                            width={300}
-                            height={300}
-                            className="object-contain h-full w-auto"
+                            width={260}
+                            height={260}
+                            className="object-contain h-full w-auto p-3"
                           />
                         </div>
 
                         {/* TITLE */}
-                        <h2
-                          className="
-                            text-[20px]
-                            sm:text-[21px]
-                            font-semibold
-                            text-black
-                            mt-5
-                            leading-[1.35]
-                            min-h-[60px]
-                          "
-                        >
+                        <h2 className="text-base sm:text-lg font-black text-[#313842] mt-4 leading-snug min-h-[52px] line-clamp-2">
                           {product.title}
                         </h2>
 
-                        {/* LINE */}
-                        <div className="w-full h-[1px] bg-[#d8dde8] my-4" />
+                        {/* DIVIDER */}
+                        <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#c5cdd9] to-transparent my-3" />
 
                         {/* SPECS */}
-                        <div className="grid grid-cols-2 gap-y-5 gap-x-4">
-                          <div className="flex items-center gap-2 text-[#50596b]">
-                            <Smartphone size={19} strokeWidth={2} />
-
-                            <span className="text-[15px]">
+                        <div className="grid grid-cols-2 gap-y-3 gap-x-3 p-3 bg-[#e6e7ee] rounded-xl border border-[#d1d9e6] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]">
+                          <div className="flex items-center gap-2 text-[#555f6e]">
+                            <Smartphone
+                              size={16}
+                              strokeWidth={2}
+                              className="text-[#F98A1A] shrink-0"
+                            />
+                            <span className="text-xs font-semibold truncate">
                               {features[0]?.featureId?.unit || "-"}
                             </span>
                           </div>
-
-                          <div className="flex items-center gap-2 text-[#50596b]">
-                            <Camera size={19} strokeWidth={2} />
-
-                            <span className="text-[15px]">
+                          <div className="flex items-center gap-2 text-[#555f6e]">
+                            <Camera
+                              size={16}
+                              strokeWidth={2}
+                              className="text-[#F98A1A] shrink-0"
+                            />
+                            <span className="text-xs font-semibold truncate">
                               {features[1]?.featureId?.unit || "-"}
                             </span>
                           </div>
-
-                          <div className="flex items-center gap-2 text-[#50596b]">
-                            <BatteryCharging size={19} strokeWidth={2} />
-
-                            <span className="text-[15px]">
+                          <div className="flex items-center gap-2 text-[#555f6e]">
+                            <BatteryCharging
+                              size={16}
+                              strokeWidth={2}
+                              className="text-[#F98A1A] shrink-0"
+                            />
+                            <span className="text-xs font-semibold truncate">
                               {features[2]?.featureId?.unit || "-"}
                             </span>
                           </div>
-
-                          <div className="flex items-center gap-2 text-[#50596b]">
-                            <Cpu size={19} strokeWidth={2} />
-
-                            <span className="text-[15px]">
+                          <div className="flex items-center gap-2 text-[#555f6e]">
+                            <Cpu
+                              size={16}
+                              strokeWidth={2}
+                              className="text-[#F98A1A] shrink-0"
+                            />
+                            <span className="text-xs font-semibold truncate">
                               {features[3]?.featureId?.unit || "-"}
                             </span>
                           </div>
@@ -404,33 +368,38 @@ export default function QuickCompare() {
                   })}
                 </div>
               ) : (
-                <div className="text-center py-20 text-[#7b8190] text-lg">
-                  No Products Found
+                <div className="flex items-center justify-center py-24">
+                  <div className="text-center">
+                    <div className="w-16 h-16 mx-auto rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-4">
+                      <Smartphone size={24} className="text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 font-semibold">
+                      No Products Found
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* STICKY BAR */}
+        {/* STICKY COMPARE BAR */}
         {compareList.length > 0 && (
-          <div className="fixed bottom-0 left-0 w-full z-50">
+          <div className="fixed bottom-4 left-0 w-full z-50 px-4">
             <div
               onClick={() => setShowCompare(true)}
-              className="w-[80%] mx-auto bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-2xl px-4 py-3 flex items-center justify-between cursor-pointer rounded-t-2xl"
+              className="max-w-2xl mx-auto bg-[#e6e7ee] border border-[#d1d9e6] shadow-[6px_6px_16px_#b8c4d2,_-6px_-6px_16px_#ffffff] px-4 py-3 flex items-center justify-between cursor-pointer rounded-2xl hover:shadow-[8px_8px_20px_#b8c4d2,_-8px_-8px_20px_#ffffff] transition-all duration-300"
             >
               {/* LEFT */}
               <div className="flex items-center gap-3">
-                <div className="bg-white text-orange-500 font-black w-9 h-9 flex items-center justify-center rounded-full shadow-md">
+                <div className="bg-[#F98A1A] text-white font-black w-10 h-10 flex items-center justify-center rounded-full shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] text-xs">
                   VS
                 </div>
-
-                <div>
-                  <p className="font-bold text-sm md:text-base">
+                <div className="leading-tight">
+                  <p className="font-black text-sm md:text-base text-[#313842]">
                     Comparison List
                   </p>
-
-                  <p className="text-xs text-white/90">
+                  <p className="text-xs text-gray-500">
                     {compareList.length} products added
                   </p>
                 </div>
@@ -441,14 +410,10 @@ export default function QuickCompare() {
                 {compareList.slice(0, 3).map((item) => (
                   <div
                     key={item._id}
-                    className="w-10 h-10 bg-white rounded-lg p-1 shadow-md"
+                    className="w-10 h-10 bg-[#e6e7ee] rounded-xl border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] p-1"
                   >
                     <Image
-                      src={
-                        item.image?.[0]?.startsWith("http")
-                          ? item.image[0]
-                          : `https://admin.compareuniverse.com/${item.thumbnail}`
-                      }
+                      src={getImageSrc(item)}
                       alt={item.title}
                       width={40}
                       height={40}
@@ -456,71 +421,73 @@ export default function QuickCompare() {
                     />
                   </div>
                 ))}
-
                 {compareList.length > 3 && (
-                  <div className="w-10 h-10 bg-white text-orange-500 font-bold flex items-center justify-center rounded-lg">
+                  <div className="w-10 h-10 bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] text-[#F98A1A] font-bold flex items-center justify-center rounded-xl text-sm">
                     +{compareList.length - 3}
                   </div>
                 )}
               </div>
+
+              {/* RIGHT ARROW */}
+              <div className="w-9 h-9 rounded-full bg-[#F98A1A] flex items-center justify-center shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff]">
+                <ChevronRight className="w-4 h-4 text-white" />
+              </div>
             </div>
           </div>
         )}
+
+        {/* COMPARE MODAL */}
         {showCompare && (
-          <div className="fixed inset-0 bg-black/40 z-50 flex items-end md:items-center justify-center">
-            <div className="w-full md:w-[700px] bg-[#eef0f5] rounded-t-3xl md:rounded-3xl shadow-2xl overflow-hidden">
-              {/* HEADER */}
-              <div className="bg-gradient-to-r from-orange-400 to-orange-500 px-5 py-4 flex items-center justify-between text-white">
+          <div className="fixed inset-0 bg-black/30 z-50 flex items-end md:items-center justify-center px-0 md:px-4">
+            <div className="w-full md:max-w-[680px] bg-[#e6e7ee] rounded-t-3xl md:rounded-3xl border border-[#d1d9e6] shadow-[8px_8px_24px_#b8c4d2,_-8px_-8px_24px_#ffffff] overflow-hidden">
+              {/* MODAL HEADER */}
+              <div className="bg-[#e6e7ee] border-b border-[#d1d9e6] px-5 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="bg-white text-orange-500 font-black w-8 h-8 flex items-center justify-center rounded-full text-sm">
+                  <div className="bg-[#F98A1A] text-white font-black w-9 h-9 flex items-center justify-center rounded-full shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] text-xs">
                     VS
                   </div>
-
-                  <h2 className="font-bold text-lg">
+                  <h2 className="font-black text-lg text-[#313842]">
                     Comparison list ({compareList.length})
                   </h2>
                 </div>
-
-                <button onClick={() => setShowCompare(false)}>✕</button>
+                <button
+                  onClick={() => setShowCompare(false)}
+                  className="w-8 h-8 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors font-bold"
+                >
+                  ✕
+                </button>
               </div>
 
-              {/* BODY */}
-              <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+              {/* MODAL BODY */}
+              <div className="p-4 space-y-3 max-h-[55vh] overflow-y-auto">
                 {compareList.map((item) => (
                   <div
                     key={item._id}
-                    className="flex items-center justify-between bg-white rounded-2xl p-3 shadow-md"
+                    className="flex items-center justify-between bg-[#e6e7ee] rounded-2xl p-3 border border-[#d1d9e6] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff]"
                   >
-                    {/* LEFT */}
                     <div className="flex items-center gap-3">
-                      <Image
-                        src={
-                          item.image?.[0]?.startsWith("http")
-                            ? item.image[0]
-                            : `https://admin.compareuniverse.com/${item.thumbnail}`
-                        }
-                        alt={item.title}
-                        width={45}
-                        height={45}
-                        className="rounded-lg"
-                      />
-
+                      <div className="w-12 h-12 bg-[#e6e7ee] rounded-xl border border-[#d1d9e6] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff] flex items-center justify-center p-1 overflow-hidden">
+                        <Image
+                          src={getImageSrc(item)}
+                          alt={item.title}
+                          width={45}
+                          height={45}
+                          className="object-contain w-full h-full"
+                        />
+                      </div>
                       <div>
-                        <p className="font-bold text-gray-800 line-clamp-1">
+                        <p className="font-black text-[#313842] line-clamp-1 text-sm">
                           {item.title}
                         </p>
-
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs text-[#F98A1A] font-bold">
                           {item.currency}
-                          {item.price}
+                          {item.price?.toLocaleString("en-IN")}
                         </p>
                       </div>
                     </div>
-
-                    {/* REMOVE */}
                     <button
                       onClick={() => handleRemoveCompare(item._id)}
-                      className="text-gray-400 hover:text-red-500 text-xl font-bold"
+                      className="w-8 h-8 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors font-bold text-lg"
                     >
                       ×
                     </button>
@@ -528,13 +495,13 @@ export default function QuickCompare() {
                 ))}
               </div>
 
-              {/* FOOTER */}
-              <div className="p-4 bg-[#eef0f5]">
+              {/* MODAL FOOTER */}
+              <div className="p-4 border-t border-[#d1d9e6]">
                 <button
                   onClick={handleCompare}
-                  className="w-full bg-white rounded-full py-3 font-bold text-orange-500 shadow-inner hover:scale-[1.01] transition"
+                  className="w-full bg-[#F98A1A] text-white rounded-2xl py-3.5 font-black text-base shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] hover:bg-[#e0740d] active:shadow-[inset_3px_3px_6px_rgba(0,0,0,0.15)] transition-all duration-300"
                 >
-                  Compare ({compareList.length})
+                  Compare Now ({compareList.length})
                 </button>
               </div>
             </div>

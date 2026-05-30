@@ -149,8 +149,8 @@ export default function Home() {
               {categories.map((cat) => (
                 <button
                   key={cat._id}
-                  onClick={() => router.push(`/categories/${cat.uniqueName}`)}
-                  className="px-5 py-2.5 text-xs sm:text-sm font-bold btn-neomorphic"
+                  onClick={() => router.push(`/categories`)}
+                  className="px-5 py-2.5 text-xs sm:text-sm font-bold text-[#313842] bg-[#e6e7ee] border border-[#d1d9e6] rounded-xl shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[6px_6px_14px_#b8c4d2,_-6px_-6px_14px_#ffffff] active:shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff] transition-all duration-300 cursor-pointer"
                 >
                   {cat.name}
                 </button>

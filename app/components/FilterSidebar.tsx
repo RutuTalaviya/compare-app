@@ -10,7 +10,7 @@ interface FilterSidebarProps {
 export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
   const [priceRange, setPriceRange] = useState<[number, number]>([11209, 224186]);
   const [weightRange, setWeightRange] = useState<[number, number]>([8.2, 696]);
-  const [openSections, setOpenSections] = useState<string[]>(['sort', 'price', 'brand', 'design']);
+  const [openSections, setOpenSections] = useState<string[]>(['sort', 'price', 'brand', 'design', 'weight']);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('Versus score');
   const [showAllVariants, setShowAllVariants] = useState(false);
@@ -27,16 +27,16 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
   };
 
   const handlePriceChange = (index: number, value: number) => {
-    const newRange = [...priceRange];
+    const newRange = [...priceRange] as [number, number];
     newRange[index] = value;
-    setPriceRange(newRange as [number, number]);
+    setPriceRange(newRange);
     onFilterChange({ priceRange: newRange, weightRange, selectedBrands, sortBy });
   };
 
   const handleWeightChange = (index: number, value: number) => {
-    const newRange = [...weightRange];
+    const newRange = [...weightRange] as [number, number];
     newRange[index] = value;
-    setWeightRange(newRange as [number, number]);
+    setWeightRange(newRange);
     onFilterChange({ priceRange, weightRange: newRange, selectedBrands, sortBy });
   };
 
@@ -48,174 +48,239 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
     onFilterChange({ priceRange, weightRange, selectedBrands: updated, sortBy });
   };
 
-  // Fake histogram data (you can make it dynamic later)
   const histogramData = [45, 65, 80, 75, 55, 40, 35, 25, 20, 15];
 
+  const sectionHeader = (label: string, key: string) => (
+    <div
+      className="flex items-center justify-between cursor-pointer mb-4"
+      onClick={() => toggleSection(key)}
+    >
+      <span className="text-sm font-black uppercase tracking-widest text-[#313842]">
+        {label}
+      </span>
+      <div className="w-7 h-7 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[2px_2px_4px_#b8c4d2,_-2px_-2px_4px_#ffffff] flex items-center justify-center">
+        {openSections.includes(key)
+          ? <ChevronUp size={14} className="text-[#F98A1A]" />
+          : <ChevronDown size={14} className="text-gray-500" />
+        }
+      </div>
+    </div>
+  );
+
   return (
-    <div className="bg-white rounded-2xl shadow-[0_10px_30px_-10px_rgb(0,0,0,0.1)] border border-gray-100 overflow-hidden w-full max-w-md">
-      
+    <div className="bg-[#e6e7ee] rounded-2xl border border-[#d1d9e6] shadow-[6px_6px_14px_#b8c4d2,_-6px_-6px_14px_#ffffff] overflow-hidden w-full">
+
       {/* SORT BY */}
-      <div className="p-6 border-b">
-        <h3 className="font-semibold mb-3">SORT BY</h3>
-        <select
-          value={sortBy}
-          onChange={(e) => {
-            setSortBy(e.target.value);
-            onFilterChange({ priceRange, weightRange, selectedBrands, sortBy: e.target.value });
-          }}
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-700 focus:outline-none focus:border-black"
-        >
-          <option>Versus score</option>
-          <option>Price: Low to High</option>
-          <option>Price: High to Low</option>
-          <option>Weight: Low to High</option>
-        </select>
-      </div>
-
-      {/* PRICE SECTION with Histogram */}
-      <div className="p-6 border-b">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Price</h3>
-          <div className="text-gray-400 cursor-help">ⓘ</div>
-        </div>
-
-        {/* Histogram */}
-        <div className="flex items-end gap-1 h-20 mb-6">
-          {histogramData.map((height, i) => (
-            <div
-              key={i}
-              className="bg-gray-300 rounded-t flex-1 transition-all"
-              style={{ height: `${height}%` }}
-            />
-          ))}
-        </div>
-
-        {/* Price Range Slider */}
-        <div className="relative mb-4">
-          <input
-            type="range"
-            min="5000"
-            max="300000"
-            step="1000"
-            value={priceRange[0]}
-            onChange={(e) => handlePriceChange(0, Number(e.target.value))}
-            className="absolute w-full accent-blue-600 pointer-events-none z-10"
-          />
-          <input
-            type="range"
-            min="5000"
-            max="300000"
-            step="1000"
-            value={priceRange[1]}
-            onChange={(e) => handlePriceChange(1, Number(e.target.value))}
-            className="absolute w-full accent-blue-600"
-          />
-          <div className="h-1 bg-gray-200 rounded-full mt-6 relative">
-            <div
-              className="absolute h-1 bg-blue-600 rounded-full"
-              style={{
-                left: `${((priceRange[0] - 5000) / 295000) * 100}%`,
-                right: `${100 - ((priceRange[1] - 5000) / 295000) * 100}%`,
-              }}
-            />
-          </div>
-        </div>
-
-        <div className="flex justify-between text-sm font-medium">
-          <div>₹{priceRange[0].toLocaleString('en-IN')}</div>
-          <div>₹{priceRange[1].toLocaleString('en-IN')}</div>
-        </div>
-
-        <div className="mt-4">
-          <select className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm">
-            <option>INR • ₹</option>
-          </select>
-        </div>
-
-        <div className="flex items-center justify-between mt-6">
-          <span className="text-sm">Show all variants</span>
-          <input
-            type="checkbox"
-            checked={showAllVariants}
-            onChange={(e) => setShowAllVariants(e.target.checked)}
-            className="w-5 h-5 accent-black"
-          />
-        </div>
-      </div>
-
-      {/* BRAND SEARCH */}
-      <div className="p-6 border-b">
-        <div className="relative mb-4">
-          <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
-          <input
-            type="text"
-            placeholder="Search brand..."
-            value={brandSearch}
-            onChange={(e) => setBrandSearch(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:border-black"
-          />
-        </div>
-
-        <div className="max-h-60 overflow-y-auto pr-2 space-y-2">
-          {brands
-            .filter(b => b.toLowerCase().includes(brandSearch.toLowerCase()))
-            .map(brand => (
-              <label key={brand} className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={selectedBrands.includes(brand)}
-                  onChange={() => toggleBrand(brand)}
-                  className="w-5 h-5 accent-black rounded"
-                />
-                <span>{brand}</span>
-              </label>
-            ))}
-        </div>
-      </div>
-
-      {/* DESIGN SECTION */}
-      <div className="p-6">
-        <h3 className="font-semibold mb-4">DESIGN</h3>
-        
-        {/* Weight */}
-        <div className="mb-6">
-          <div
-            className="flex justify-between cursor-pointer mb-4"
-            onClick={() => toggleSection('weight')}
+      <div className="p-5 border-b border-[#d1d9e6]">
+        {sectionHeader('Sort By', 'sort')}
+        {openSections.includes('sort') && (
+          <select
+            value={sortBy}
+            onChange={(e) => {
+              setSortBy(e.target.value);
+              onFilterChange({ priceRange, weightRange, selectedBrands, sortBy: e.target.value });
+            }}
+            className="w-full bg-[#e6e7ee] border border-[#d1d9e6] rounded-xl px-4 py-3 text-sm font-semibold text-[#313842] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff] focus:outline-none cursor-pointer"
           >
-            <span className="font-medium">Weight</span>
-            {openSections.includes('weight') ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-          </div>
-          {openSections.includes('weight') && (
-            <div className="space-y-4">
-              <div className="flex gap-4">
-                <div className="flex-1 bg-gray-50 border rounded-2xl px-4 py-3 text-center font-semibold">
-                  {weightRange[0].toFixed(1)} g
-                </div>
-                <div className="flex-1 bg-gray-50 border rounded-2xl px-4 py-3 text-center font-semibold">
-                  {weightRange[1]} g
-                </div>
-              </div>
+            <option>Versus score</option>
+            <option>Price: Low to High</option>
+            <option>Price: High to Low</option>
+            <option>Weight: Low to High</option>
+          </select>
+        )}
+      </div>
+
+      {/* PRICE */}
+      <div className="p-5 border-b border-[#d1d9e6]">
+        {sectionHeader('Price', 'price')}
+        {openSections.includes('price') && (
+          <>
+            {/* Histogram */}
+            <div className="flex items-end gap-1 h-16 mb-5 px-1">
+              {histogramData.map((height, i) => (
+                <div
+                  key={i}
+                  className="rounded-t flex-1 bg-[#e6e7ee] border border-[#d1d9e6] shadow-[2px_2px_4px_#b8c4d2,_-1px_-1px_3px_#ffffff] transition-all"
+                  style={{ height: `${height}%` }}
+                />
+              ))}
+            </div>
+
+            {/* Price Range Sliders */}
+            <div className="relative mb-5 h-6">
               <input
                 type="range"
-                min="0"
-                max="1000"
-                step="0.1"
-                value={weightRange[1]}
-                onChange={(e) => handleWeightChange(1, Number(e.target.value))}
-                className="w-full accent-black"
+                min="5000"
+                max="300000"
+                step="1000"
+                value={priceRange[0]}
+                onChange={(e) => handlePriceChange(0, Number(e.target.value))}
+                className="absolute w-full pointer-events-none z-10"
+                style={{ accentColor: '#F98A1A' }}
+              />
+              <input
+                type="range"
+                min="5000"
+                max="300000"
+                step="1000"
+                value={priceRange[1]}
+                onChange={(e) => handlePriceChange(1, Number(e.target.value))}
+                className="absolute w-full"
+                style={{ accentColor: '#F98A1A' }}
+              />
+              <div className="h-1.5 bg-[#e6e7ee] shadow-[inset_2px_2px_4px_#b8c4d2,_inset_-2px_-2px_4px_#ffffff] rounded-full mt-3 relative border border-[#d1d9e6]">
+                <div
+                  className="absolute h-1.5 bg-[#F98A1A] rounded-full"
+                  style={{
+                    left: `${((priceRange[0] - 5000) / 295000) * 100}%`,
+                    right: `${100 - ((priceRange[1] - 5000) / 295000) * 100}%`,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Price Values */}
+            <div className="flex gap-3 mb-4">
+              <div className="flex-1 bg-[#e6e7ee] border border-[#d1d9e6] rounded-xl px-3 py-2.5 text-center text-xs font-black text-[#313842] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]">
+                ₹{priceRange[0].toLocaleString('en-IN')}
+              </div>
+              <div className="flex-1 bg-[#e6e7ee] border border-[#d1d9e6] rounded-xl px-3 py-2.5 text-center text-xs font-black text-[#313842] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]">
+                ₹{priceRange[1].toLocaleString('en-IN')}
+              </div>
+            </div>
+
+            {/* Currency Select */}
+            <select className="w-full bg-[#e6e7ee] border border-[#d1d9e6] rounded-xl px-4 py-2.5 text-sm font-semibold text-[#313842] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff] focus:outline-none cursor-pointer mb-4">
+              <option>INR • ₹</option>
+            </select>
+
+            {/* Show All Variants Toggle */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-[#555f6e]">Show all variants</span>
+              <div
+                onClick={() => setShowAllVariants(!showAllVariants)}
+                className={`w-12 h-6 rounded-full border border-[#d1d9e6] cursor-pointer transition-all duration-300 relative shadow-[inset_2px_2px_4px_#b8c4d2,_inset_-2px_-2px_4px_#ffffff] ${showAllVariants ? 'bg-[#F98A1A]' : 'bg-[#e6e7ee]'}`}
+              >
+                <div className={`absolute top-0.5 w-5 h-5 rounded-full border border-[#d1d9e6] shadow-[2px_2px_4px_#b8c4d2,_-2px_-2px_4px_#ffffff] bg-[#e6e7ee] transition-all duration-300 ${showAllVariants ? 'left-6' : 'left-0.5'}`} />
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* BRAND */}
+      <div className="p-5 border-b border-[#d1d9e6]">
+        {sectionHeader('Brand', 'brand')}
+        {openSections.includes('brand') && (
+          <>
+            {/* Brand Search */}
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+              <input
+                type="text"
+                placeholder="Search brand..."
+                value={brandSearch}
+                onChange={(e) => setBrandSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 bg-[#e6e7ee] border border-[#d1d9e6] rounded-xl text-sm font-medium text-[#313842] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff] focus:outline-none placeholder:text-gray-400"
               />
             </div>
-          )}
-        </div>
 
-        {/* Other Design Options */}
-        {['Thickness', 'Width', 'Height', 'Water resistance'].map(item => (
-          <div key={item} className="py-4 border-t border-gray-100 flex justify-between cursor-pointer">
-            <span>{item}</span>
-            <ChevronDown size={20} />
-          </div>
-        ))}
+            {/* Brand List */}
+            <div className="max-h-52 overflow-y-auto pr-1 space-y-2">
+              {brands
+                .filter(b => b.toLowerCase().includes(brandSearch.toLowerCase()))
+                .map(brand => {
+                  const isSelected = selectedBrands.includes(brand);
+                  return (
+                    <label
+                      key={brand}
+                      className="flex items-center gap-3 cursor-pointer group"
+                      onClick={() => toggleBrand(brand)}
+                    >
+                      <div className={`w-5 h-5 rounded-md border border-[#d1d9e6] flex items-center justify-center transition-all duration-200 shrink-0 ${
+                        isSelected
+                          ? 'bg-[#F98A1A] shadow-[inset_2px_2px_4px_rgba(0,0,0,0.15)]'
+                          : 'bg-[#e6e7ee] shadow-[2px_2px_4px_#b8c4d2,_-2px_-2px_4px_#ffffff]'
+                      }`}>
+                        {isSelected && (
+                          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                            <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className={`text-sm font-semibold transition-colors ${isSelected ? 'text-[#F98A1A]' : 'text-[#555f6e]'}`}>
+                        {brand}
+                      </span>
+                    </label>
+                  );
+                })}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* DESIGN */}
+      <div className="p-5">
+        {sectionHeader('Design', 'design')}
+        {openSections.includes('design') && (
+          <>
+            {/* Weight */}
+            <div className="mb-4">
+              <div
+                className="flex items-center justify-between cursor-pointer mb-3"
+                onClick={() => toggleSection('weight')}
+              >
+                <span className="text-sm font-bold text-[#313842]">Weight</span>
+                <div className="w-6 h-6 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[2px_2px_4px_#b8c4d2,_-2px_-2px_4px_#ffffff] flex items-center justify-center">
+                  {openSections.includes('weight')
+                    ? <ChevronUp size={12} className="text-[#F98A1A]" />
+                    : <ChevronDown size={12} className="text-gray-500" />
+                  }
+                </div>
+              </div>
+
+              {openSections.includes('weight') && (
+                <div className="space-y-3">
+                  <div className="flex gap-3">
+                    <div className="flex-1 bg-[#e6e7ee] border border-[#d1d9e6] rounded-xl px-3 py-2.5 text-center text-xs font-black text-[#313842] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]">
+                      {weightRange[0].toFixed(1)} g
+                    </div>
+                    <div className="flex-1 bg-[#e6e7ee] border border-[#d1d9e6] rounded-xl px-3 py-2.5 text-center text-xs font-black text-[#313842] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]">
+                      {weightRange[1]} g
+                    </div>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1000"
+                    step="0.1"
+                    value={weightRange[1]}
+                    onChange={(e) => handleWeightChange(1, Number(e.target.value))}
+                    className="w-full"
+                    style={{ accentColor: '#F98A1A' }}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Other Design Items */}
+            {['Thickness', 'Width', 'Height', 'Water resistance'].map((item, idx, arr) => (
+              <div
+                key={item}
+                className={`py-3 flex items-center justify-between cursor-pointer ${idx < arr.length - 1 ? 'border-b border-[#d1d9e6]' : ''}`}
+                onClick={() => toggleSection(item)}
+              >
+                <span className="text-sm font-semibold text-[#555f6e]">{item}</span>
+                <div className="w-6 h-6 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[2px_2px_4px_#b8c4d2,_-2px_-2px_4px_#ffffff] flex items-center justify-center">
+                  {openSections.includes(item)
+                    ? <ChevronUp size={12} className="text-[#F98A1A]" />
+                    : <ChevronDown size={12} className="text-gray-500" />
+                  }
+                </div>
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );

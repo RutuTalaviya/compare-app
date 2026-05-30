@@ -56,7 +56,7 @@ export default function ComparePage() {
             const firstFeatureName =
               response.data.comparedProducts[0].featureData[0].featureName;
             setActiveSidebarTab(
-              firstFeatureName.toLowerCase().replace(/\s+/g, "-")
+              firstFeatureName.toLowerCase().replace(/\s+/g, "-"),
             );
           }
         }
@@ -72,14 +72,14 @@ export default function ComparePage() {
   }, [uniqueTitles]);
 
   // Safe data extraction (Crash proof)
- const products = compareData?.comparedProducts || [];
+  const products = compareData?.comparedProducts || [];
   const popularComparisons = compareData?.popularComparison || [];
   console.log("1. URL Slug (uniqueTitles):", uniqueTitles);
   console.log("2. Full State (compareData):", compareData);
   console.log("3. Extracted Products Array:", products);
-const activeProduct =
+  const activeProduct =
     products.find((p: any) => p._id === activeSpecTab) || products[0] || {};
-    
+
   // Dynamic detailed specs extraction
   const detailedSpecs = (products[0]?.featureData || []).map((feature: any) => {
     let IconComponent = Settings;
@@ -93,10 +93,10 @@ const activeProduct =
     const allSubfeatureNames = new Set<string>();
     products.forEach((p: any) => {
       const pFeature = p.featureData?.find(
-        (f: any) => f.featureName === feature.featureName
+        (f: any) => f.featureName === feature.featureName,
       );
       pFeature?.subfeatures?.forEach((sf: any) =>
-        allSubfeatureNames.add(sf.name)
+        allSubfeatureNames.add(sf.name),
       );
     });
 
@@ -104,7 +104,7 @@ const activeProduct =
       const row: any = { title: sfName };
       products.forEach((p: any, pIdx: number) => {
         const pFeature = p.featureData?.find(
-          (f: any) => f.featureName === feature.featureName
+          (f: any) => f.featureName === feature.featureName,
         );
         const sf = pFeature?.subfeatures?.find((s: any) => s.name === sfName);
         row[`param${pIdx + 1}`] = sf ? sf.details || sf.unit || "-" : "-";
@@ -142,7 +142,7 @@ const activeProduct =
   useEffect(() => {
     const handleScroll = () => {
       const sections = detailedSpecs.map((cat: any) =>
-        document.getElementById(cat.id)
+        document.getElementById(cat.id),
       );
       let currentActive = activeSidebarTab;
 
@@ -180,7 +180,9 @@ const activeProduct =
   if (products.length === 0) {
     return (
       <div className="min-h-screen bg-[#eaeff4] flex items-center justify-center">
-        <p className="text-gray-500 font-bold text-xl">No products found for comparison.</p>
+        <p className="text-gray-500 font-bold text-xl">
+          No products found for comparison.
+        </p>
       </div>
     );
   }
@@ -191,7 +193,7 @@ const activeProduct =
 
       <main className="flex-grow pt-24 pb-16 px-4 md:px-8 max-w-[1300px] mx-auto w-full relative">
         {/* ================= FIXED TOP HEADER ================= */}
-        <div className="sticky top-[70px] md:top-[80px] z-50 bg-[#eaeff4] p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-[#d1d9e6] shadow-[6px_6px_12px_#b8c4d2,-6px_-6px_12px_#ffffff] mb-6 flex justify-between items-start">
+        <div className="sticky top-[64px] md:top-[72px] z-40 bg-[#e6e7ee] p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-[#d1d9e6] shadow-[6px_6px_12px_#b8c4d2,-6px_-6px_12px_#ffffff] mb-6 flex justify-between items-start">
           <div className="w-full">
             <div className="text-[10px] md:text-[12px] font-medium text-gray-500 mb-2 md:mb-3 flex items-center gap-1 md:gap-2 flex-wrap">
               <Link href="/" className="hover:text-[#F98A1A] transition-colors">
@@ -271,15 +273,49 @@ const activeProduct =
                         fill
                         className="object-contain p-4 drop-shadow-md"
                       />
-                      <div className="absolute -top-4 -right-4 w-12 h-12 bg-[#eaeff4] rounded-full shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] flex items-center justify-center border-[2px] border-gray-700 z-10">
-                        <span className="text-sm font-black text-gray-800">
-                          {prod.scoreValue || 0}
-                        </span>
+                      {/* SCORE BADGE - CategoriesPage style */}
+                      <div className="absolute -top-4 -right-4 z-10">
+                        <div className="w-14 h-14 bg-[#e6e7ee] rounded-full border border-[#d1d9e6] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] flex flex-col items-center justify-center relative">
+                          <svg height="56" width="56" className="absolute">
+                            <circle
+                              stroke="#d1d9e6"
+                              fill="transparent"
+                              strokeWidth={4}
+                              r={22}
+                              cx={28}
+                              cy={28}
+                            />
+                            <circle
+                              stroke="#F98A1A"
+                              fill="transparent"
+                              strokeWidth={4}
+                              strokeLinecap="round"
+                              r={22}
+                              cx={28}
+                              cy={28}
+                              strokeDasharray={2 * Math.PI * 22}
+                              strokeDashoffset={
+                                2 * Math.PI * 22 -
+                                Math.min((prod.scoreValue || 0) / 100, 1) *
+                                  2 *
+                                  Math.PI *
+                                  22
+                              }
+                              transform="rotate(-90 28 28)"
+                            />
+                          </svg>
+                          <span className="text-xs font-black text-[#F98A1A] leading-none z-10">
+                            {prod.scoreValue || 0}
+                          </span>
+                          <span className="text-[7px] font-bold uppercase text-gray-500 mt-0.5 z-10">
+                            Points
+                          </span>
+                        </div>
                       </div>
                     </div>
 
                     <div className="px-6 py-2.5 rounded-full bg-[#eaeff4] border border-[#d1d9e6] shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] text-sm font-bold text-gray-700">
-                      {prod.currency} {prod.price?.toLocaleString('en-IN')}
+                      {prod.currency} {prod.price?.toLocaleString("en-IN")}
                     </div>
                   </div>
                 )}
