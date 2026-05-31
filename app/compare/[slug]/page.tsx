@@ -190,7 +190,7 @@ export default function ComparePage() {
     <div className="min-h-screen bg-[#eaeff4] flex flex-col font-sans relative">
       <Navbar />
 
-      <main className="flex-grow pt-24 pb-16 px-4 md:px-8 max-w-[1300px] mx-auto w-full relative">
+      <main className="flex-grow pt-24 pb-16 px-5 lg:px-8 max-w-[1400px] mx-auto w-full relative">
         {/* ================= FIXED TOP HEADER ================= */}
         <div className="sticky top-[64px] md:top-[72px] z-40 bg-[#e6e7ee] p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-[#d1d9e6] shadow-[6px_6px_12px_#b8c4d2,-6px_-6px_12px_#ffffff] mb-6 flex justify-between items-start">
           <div className="w-full">
@@ -200,9 +200,8 @@ export default function ComparePage() {
               </Link>
               <span>&gt;</span>
               <Link
-                href={`/categories/${
-                  products[0]?.subCategoryId?.uniqueName || "smartphone"
-                }`}
+                href={`/categories/${products[0]?.subCategoryId?.uniqueName || "smartphone"
+                  }`}
                 className="hover:text-[#F98A1A] transition-colors"
               >
                 {products[0]?.subCategoryId?.name || "Smartphone"}
@@ -218,14 +217,13 @@ export default function ComparePage() {
             </h1>
 
             <div className="flex overflow-x-auto gap-2 mt-3 md:mt-4 pb-1 [&::-webkit-scrollbar]:hidden">
-              {["OVERVIEW", "PRICES", "REVIEWS", "SPECS"].map((tab, idx) => (
+              {["OVERVIEW", "PRICES", "SPECS"].map((tab, idx) => (
                 <button
                   key={tab}
-                  className={`px-3 md:px-4 py-1.5 rounded-full text-[9px] md:text-[11px] font-bold uppercase tracking-wider transition-all border border-[#d1d9e6] ${
-                    idx === 0
-                      ? "bg-[#eaeff4] shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff] text-gray-800"
-                      : "bg-[#eaeff4] shadow-[3px_3px_6px_#b8c4d2,-3px_-3px_6px_#ffffff] text-gray-500 hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff]"
-                  }`}
+                  className={`px-3 md:px-4 py-1.5 rounded-full text-[9px] md:text-[11px] font-bold uppercase tracking-wider transition-all border border-[#d1d9e6] ${idx === 0
+                    ? "bg-[#eaeff4] shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff] text-gray-800"
+                    : "bg-[#eaeff4] shadow-[3px_3px_6px_#b8c4d2,-3px_-3px_6px_#ffffff] text-gray-500 hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff]"
+                    }`}
                 >
                   {tab}
                 </button>
@@ -242,7 +240,7 @@ export default function ComparePage() {
         <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-between w-full mb-16 md:mb-20">
           {[0, 1, 2, 3].map((index) => {
             const prod = products[index];
-            if (index > 0 && !prod && index >= products.length) return null; 
+            if (index > 0 && !prod && index >= products.length) return null;
 
             return (
               <React.Fragment key={index}>
@@ -296,9 +294,9 @@ export default function ComparePage() {
                               strokeDashoffset={
                                 2 * Math.PI * 22 -
                                 Math.min((prod.scoreValue || 0) / 100, 1) *
-                                  2 *
-                                  Math.PI *
-                                  22
+                                2 *
+                                Math.PI *
+                                22
                               }
                               transform="rotate(-90 28 28)"
                             />
@@ -349,11 +347,10 @@ export default function ComparePage() {
               <button
                 key={prod._id}
                 onClick={() => setActiveSpecTab(prod._id)}
-                className={`px-6 py-2 rounded-xl text-sm font-bold transition-all border border-[#d1d9e6] whitespace-nowrap ${
-                  activeSpecTab === prod._id
-                    ? "bg-[#eaeff4] shadow-[inset_3px_3px_6px_#b8c4d2,inset_-3px_-3px_6px_#ffffff] text-[#F98A1A]"
-                    : "bg-[#eaeff4] shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] text-gray-500 hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff]"
-                }`}
+                className={`px-6 py-2 rounded-xl text-sm font-bold transition-all border border-[#d1d9e6] whitespace-nowrap ${activeSpecTab === prod._id
+                  ? "bg-[#eaeff4] shadow-[inset_3px_3px_6px_#b8c4d2,inset_-3px_-3px_6px_#ffffff] text-[#F98A1A]"
+                  : "bg-[#eaeff4] shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] text-gray-500 hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff]"
+                  }`}
               >
                 {prod.title}
               </button>
@@ -571,11 +568,10 @@ export default function ComparePage() {
                 <button
                   key={cat.id}
                   onClick={() => scrollToSection(cat.id)}
-                  className={`flex items-center gap-3 rounded-xl transition-all duration-300 border border-[#d1d9e6] overflow-hidden whitespace-nowrap ${
-                    activeSidebarTab === cat.id
-                      ? "bg-[#424242] text-white shadow-md px-4 py-3 min-w-max w-full"
-                      : "bg-[#eaeff4] shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] text-gray-600 hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff] w-12 h-12 justify-center"
-                  }`}
+                  className={`flex items-center gap-3 rounded-xl transition-all duration-300 border border-[#d1d9e6] overflow-hidden whitespace-nowrap ${activeSidebarTab === cat.id
+                    ? "bg-[#424242] text-white shadow-md px-4 py-3 min-w-max w-full"
+                    : "bg-[#eaeff4] shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] text-gray-600 hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff] w-12 h-12 justify-center"
+                    }`}
                 >
                   <cat.icon className="w-5 h-5 shrink-0" />
                   {activeSidebarTab === cat.id && (
@@ -611,9 +607,8 @@ export default function ComparePage() {
                         <div
                           className="absolute inset-0 rounded-full"
                           style={{
-                            background: `conic-gradient(${scoreColor} ${
-                              percent || 0
-                            }%, #d1d9e6 ${percent || 0}%)`,
+                            background: `conic-gradient(${scoreColor} ${percent || 0
+                              }%, #d1d9e6 ${percent || 0}%)`,
                           }}
                         />
                         <div className="absolute inset-[3px] rounded-full bg-[#E6E7EE] flex items-center justify-center shadow-[inset_2px_2px_4px_#d1d9e6,inset_-2px_-2px_4px_#ffffff]">
@@ -644,11 +639,10 @@ export default function ComparePage() {
                             {products.map((_: any, pIdx: number) => (
                               <div
                                 key={pIdx}
-                                className={`px-4 py-3 text-[#333333] text-center bg-[#f0f1f6] flex items-center justify-center shadow-[inset_2px_2px_4px_#d1d9e6] ${
-                                  pIdx < products.length - 1
-                                    ? "border-r border-[#d1d9e6]"
-                                    : ""
-                                }`}
+                                className={`px-4 py-3 text-[#333333] text-center bg-[#f0f1f6] flex items-center justify-center shadow-[inset_2px_2px_4px_#d1d9e6] ${pIdx < products.length - 1
+                                  ? "border-r border-[#d1d9e6]"
+                                  : ""
+                                  }`}
                               >
                                 {item[`param${pIdx + 1}`]}
                               </div>

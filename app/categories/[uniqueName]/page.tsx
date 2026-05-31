@@ -131,8 +131,8 @@ export default function SubCategoryUI() {
     <div className="min-h-screen bg-[#e6e7ee] flex flex-col">
       <Navbar />
 
-      <div className="flex-1 pt-24 pb-16 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="flex-1 pt-24 pb-16">
+        <div className="max-w-[1400px] mx-auto px-5 lg:px-8">
           {/* Outer Neomorphic Container */}
           <div className="bg-[#e6e7ee] rounded-2xl p-4 md:p-8 shadow-[inset_6px_6px_12px_#b8c4d2,inset_-6px_-6px_12px_#ffffff] border border-[#d1d9e6]">
             {/* Breadcrumb */}
@@ -302,18 +302,16 @@ export default function SubCategoryUI() {
                                 ? handleRemoveCompare(product._id)
                                 : handleAddCompare(product)
                             }
-                            className={`w-10 h-10 md:w-12 md:h-12 rounded-full border border-[#d1d9e6] flex items-center justify-center transition-all duration-300 self-end sm:self-auto shrink-0 ${
-                              isInCompare
-                                ? "bg-[#e6e7ee] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
-                                : "bg-[#e6e7ee] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] hover:shadow-[6px_6px_12px_#b8c4d2,_-6px_-6px_12px_#ffffff]"
-                            }`}
+                            className={`w-10 h-10 md:w-12 md:h-12 rounded-full border border-[#d1d9e6] flex items-center justify-center transition-all duration-300 self-end sm:self-auto shrink-0 ${isInCompare
+                              ? "bg-[#e6e7ee] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
+                              : "bg-[#e6e7ee] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] hover:shadow-[6px_6px_12px_#b8c4d2,_-6px_-6px_12px_#ffffff]"
+                              }`}
                           >
                             <Plus
-                              className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-300 ${
-                                isInCompare
-                                  ? "text-red-500 rotate-45"
-                                  : "text-[#313842]"
-                              }`}
+                              className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-300 ${isInCompare
+                                ? "text-red-500 rotate-45"
+                                : "text-[#313842]"
+                                }`}
                             />
                           </button>
                         </div>
@@ -383,57 +381,61 @@ export default function SubCategoryUI() {
 
       {/* COMPARE MODAL */}
       {showCompare && (
-        <div className="fixed inset-0 bg-black/30 z-50 flex items-end md:items-center justify-center px-0 md:px-4">
-          <div className="w-full md:max-w-[680px] bg-[#e6e7ee] rounded-t-3xl md:rounded-3xl border border-[#d1d9e6] shadow-[8px_8px_24px_#b8c4d2,_-8px_-8px_24px_#ffffff] overflow-hidden">
-            {/* HEADER */}
-            <div className="bg-[#e6e7ee] border-b border-[#d1d9e6] shadow-[0_4px_8px_#b8c4d2] px-5 py-4 flex items-center justify-between">
+        <div className="fixed inset-0 bg-transparent z-50 flex items-end md:items-center justify-center px-0 md:px-4">
+          <div className="w-full md:max-w-[720px] bg-[#e6e7ee] rounded-t-3xl md:rounded-3xl border border-[#d1d9e6] shadow-[8px_8px_24px_#b8c4d2,_-8px_-8px_24px_#ffffff] overflow-hidden">
+
+            {/* MODAL HEADER */}
+            <div className="bg-[#e6e7ee] border-b border-[#d1d9e6] px-4 py-3 flex items-center justify-between shadow-[0_4px_8px_#b8c4d2]">
               <div className="flex items-center gap-3">
-                <div className="bg-[#F98A1A] text-white font-black w-9 h-9 flex items-center justify-center rounded-full shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] text-xs">
+                <div className="w-8 h-8 bg-[#F98A1A] rounded-full flex items-center justify-center shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] text-white font-black text-xs">
                   VS
                 </div>
-                <h2 className="font-black text-lg text-[#313842]">
-                  Comparison list ({compareList.length})
-                </h2>
+                <div>
+                  <h2 className="font-black text-sm text-[#313842]">Comparison List</h2>
+                  <p className="text-[10px] text-gray-500 font-semibold">{compareList.length} products selected</p>
+                </div>
               </div>
               <button
                 onClick={() => setShowCompare(false)}
-                className="w-8 h-8 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors font-bold"
+                className="w-7 h-7 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2,_inset_-2px_-2px_4px_#ffffff] flex items-center justify-center text-gray-500 hover:text-red-500 transition-all font-bold text-xs"
               >
                 ✕
               </button>
             </div>
 
-            {/* BODY */}
-            <div className="p-4 space-y-3 max-h-[55vh] overflow-y-auto">
+            {/* MODAL BODY */}
+            <div className="p-3 space-y-2 max-h-[25vh] md:max-h-[40vh] overflow-y-auto">
               {compareList.map((item) => (
                 <div
                   key={item._id}
-                  className="flex items-center justify-between bg-[#e6e7ee] rounded-2xl p-3 border border-[#d1d9e6] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff]"
+                  className="flex items-center justify-between bg-[#e6e7ee] rounded-xl p-3 border border-[#d1d9e6] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff]"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-[#e6e7ee] rounded-xl border border-[#d1d9e6] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff] flex items-center justify-center overflow-hidden p-1">
+                    <div className="w-10 h-10 bg-[#e6e7ee] rounded-xl border border-[#d1d9e6] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff] flex items-center justify-center overflow-hidden p-1 shrink-0">
                       <Image
                         src={getImageSrc(item.image?.[0])}
                         alt={item.title}
-                        width={45}
-                        height={45}
+                        width={40}
+                        height={40}
                         className="object-contain w-full h-full"
                         unoptimized
                       />
                     </div>
                     <div>
-                      <p className="font-black text-[#313842] line-clamp-1 text-sm">
+                      <p className="text-[9px] uppercase tracking-wider text-gray-400 font-bold">
+                        {item.productCompany}
+                      </p>
+                      <p className="font-black text-[#313842] line-clamp-1 text-xs">
                         {item.title}
                       </p>
-                      <p className="text-xs text-[#F98A1A] font-bold">
-                        {item.currency}
-                        {item.price?.toLocaleString("en-IN")}
+                      <p className="text-xs text-[#F98A1A] font-black">
+                        {item.currency}{item.price?.toLocaleString("en-IN")}
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => handleRemoveCompare(item._id)}
-                    className="w-8 h-8 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors font-bold text-lg"
+                    className="w-7 h-7 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2,_inset_-2px_-2px_4px_#ffffff] flex items-center justify-center text-gray-400 hover:text-red-500 transition-all font-bold shrink-0"
                   >
                     ×
                   </button>
@@ -441,19 +443,21 @@ export default function SubCategoryUI() {
               ))}
             </div>
 
-            {/* FOOTER BUTTON */}
-            <div className="p-4 border-t border-[#d1d9e6]">
-              <button
-                className="w-full bg-[#F98A1A] text-white rounded-2xl py-3.5 font-black text-base shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] hover:bg-[#e0740d] active:shadow-[inset_3px_3px_6px_rgba(0,0,0,0.2)] transition-all duration-300"
-                onClick={handleCompare}
-              >
-                Compare Now ({compareList.length})
-              </button>
+            {/* MODAL FOOTER */}
+            <div className="p-3 border-t border-[#d1d9e6] bg-[#e6e7ee]">
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCompare}
+                  className="flex-1 py-2.5 rounded-xl bg-[#F98A1A] text-white font-black text-xs shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] hover:bg-[#e0740d] active:shadow-[inset_3px_3px_6px_rgba(0,0,0,0.2)] transition-all duration-300"
+                >
+                  Compare Now ({compareList.length})
+                </button>
+              </div>
             </div>
+
           </div>
         </div>
       )}
-
       <Footer />
     </div>
   );

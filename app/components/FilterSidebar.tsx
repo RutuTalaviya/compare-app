@@ -68,8 +68,7 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
   );
 
   return (
-    <div className="bg-[#e6e7ee] rounded-2xl border border-[#d1d9e6] shadow-[6px_6px_14px_#b8c4d2,_-6px_-6px_14px_#ffffff] overflow-hidden w-full">
-
+    <div className="bg-[#e6e7ee] rounded-2xl border border-[#d1d9e6] shadow-[6px_6px_14px_#b8c4d2,_-6px_-6px_14px_#ffffff] overflow-hidden w-full lg:w-80">
       {/* SORT BY */}
       <div className="p-5 border-b border-[#d1d9e6]">
         {sectionHeader('Sort By', 'sort')}
@@ -197,11 +196,10 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
                       className="flex items-center gap-3 cursor-pointer group"
                       onClick={() => toggleBrand(brand)}
                     >
-                      <div className={`w-5 h-5 rounded-md border border-[#d1d9e6] flex items-center justify-center transition-all duration-200 shrink-0 ${
-                        isSelected
+                      <div className={`w-5 h-5 rounded-md border border-[#d1d9e6] flex items-center justify-center transition-all duration-200 shrink-0 ${isSelected
                           ? 'bg-[#F98A1A] shadow-[inset_2px_2px_4px_rgba(0,0,0,0.15)]'
                           : 'bg-[#e6e7ee] shadow-[2px_2px_4px_#b8c4d2,_-2px_-2px_4px_#ffffff]'
-                      }`}>
+                        }`}>
                         {isSelected && (
                           <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                             <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

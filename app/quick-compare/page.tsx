@@ -156,7 +156,7 @@ export default function QuickCompare() {
       <Navbar />
 
       <main className="min-h-screen bg-[#e6e7ee] pt-[85px] sm:pt-[95px] lg:pt-[105px] pb-32">
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-20">
+        <div className="max-w-[1400px] mx-auto px-5 lg:px-8">
           {/* OUTER NEOMORPHIC CONTAINER */}
           <div className="bg-[#e6e7ee] rounded-2xl border border-[#d1d9e6] shadow-[inset_6px_6px_12px_#b8c4d2,inset_-6px_-6px_12px_#ffffff] overflow-hidden">
             {/* BREADCRUMB */}
@@ -180,11 +180,10 @@ export default function QuickCompare() {
                 <button
                   key={category._id}
                   onClick={() => handleCategoryClick(category)}
-                  className={`px-5 py-2.5 rounded-xl text-sm font-bold border border-[#d1d9e6] transition-all duration-300 cursor-pointer ${
-                    selectedCategory?._id === category._id
+                  className={`px-5 py-2.5 rounded-xl text-sm font-bold border border-[#d1d9e6] transition-all duration-300 cursor-pointer ${selectedCategory?._id === category._id
                       ? "bg-[#e6e7ee] text-[#F98A1A] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
                       : "bg-[#e6e7ee] text-[#555f6e] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[5px_5px_10px_#b8c4d2,_-5px_-5px_10px_#ffffff]"
-                  }`}
+                    }`}
                 >
                   {category.name}
                 </button>
@@ -198,11 +197,10 @@ export default function QuickCompare() {
                   <button
                     key={sub._id}
                     onClick={() => handleSubCategoryClick(sub)}
-                    className={`px-5 py-2 rounded-xl text-xs font-bold border border-[#d1d9e6] transition-all duration-300 cursor-pointer ${
-                      selectedSubCategory?._id === sub._id
+                    className={`px-5 py-2 rounded-xl text-xs font-bold border border-[#d1d9e6] transition-all duration-300 cursor-pointer ${selectedSubCategory?._id === sub._id
                         ? "bg-[#e6e7ee] text-[#F98A1A] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
                         : "bg-[#e6e7ee] text-[#555f6e] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[5px_5px_10px_#b8c4d2,_-5px_-5px_10px_#ffffff]"
-                    }`}
+                      }`}
                   >
                     {sub.name}
                   </button>
@@ -284,11 +282,10 @@ export default function QuickCompare() {
                               ? handleRemoveCompare(product._id)
                               : handleAddCompare(product)
                           }
-                          className={`absolute top-3 right-3 w-11 h-11 rounded-full border border-[#d1d9e6] flex items-center justify-center transition-all duration-300 ${
-                            isInCompare
+                          className={`absolute top-3 right-3 w-11 h-11 rounded-full border border-[#d1d9e6] flex items-center justify-center transition-all duration-300 ${isInCompare
                               ? "bg-[#e6e7ee] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
                               : "bg-[#e6e7ee] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] hover:shadow-[6px_6px_12px_#b8c4d2,_-6px_-6px_12px_#ffffff]"
-                          }`}
+                            }`}
                         >
                           {isInCompare ? (
                             <X size={20} className="text-red-500" />

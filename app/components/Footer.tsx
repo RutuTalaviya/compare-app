@@ -47,7 +47,7 @@ const Footer = () => {
             Suggest a product
           </Link>
           <Link
-            href="/partnerships"
+            href="/ParntnerShip"
             className="text-gray-400 hover:text-white transition-colors"
           >
             Partnerships
@@ -72,7 +72,7 @@ const Footer = () => {
             Contact Us
           </Link>
           <Link
-            href="/guidelines"
+            href="/editorial-guidelines"
             className="text-gray-400 hover:text-white transition-colors"
           >
             Editorial guidelines
