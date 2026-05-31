@@ -19,3 +19,19 @@ export const searchProducts = async (searchString: string) => {
     throw error;
   }
 };
+
+/**
+ * Suggest a product
+ */
+export const suggestProduct = async (data: { name: string; source: string }) => {
+  try {
+    const response = await apiInstance.post(
+      `admin/article/get`,
+      data
+    );
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
