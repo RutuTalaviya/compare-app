@@ -139,7 +139,7 @@ export default function Home() {
 
               <button
                 onClick={() => router.push("/categories")}
-                className="text-xs font-black text-[#F98A1A] hover:text-[#e0740d] transition-colors uppercase tracking-wider"
+                className="px-4 py-2 text-xs font-black text-[#F98A1A] bg-[#e6e7ee] border border-[#d1d9e6] rounded-xl shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[6px_6px_14px_#b8c4d2,_-6px_-6px_14px_#ffffff] active:shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff] transition-all duration-300 uppercase tracking-wider cursor-pointer"
               >
                 See All
               </button>
