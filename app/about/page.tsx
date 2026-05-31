@@ -61,7 +61,7 @@ export default function AboutPage() {
     return (
         <div className="min-h-screen bg-[#e6e7ee]">
             <Navbar />
-            <main className="max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 pt-28 pb-20">
+            <main className="max-w-[1400px] mx-auto px-5 lg:px-8 pt-28 pb-20">
 
                 {/* HERO */}
                 <div className="text-center mb-16 md:mb-20">
@@ -98,8 +98,8 @@ export default function AboutPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-14 mb-16 md:mb-20 items-center">
                     <div className="order-2 lg:order-1">
                         <div
-                            className="w-full h-[380px] sm:h-[460px] border border-[#d1d9e6] shadow-[8px_8px_20px_#b8c4d2,_-8px_-8px_20px_#ffffff] overflow-hidden"
-                            style={{ borderRadius: "63% 37% 30% 70% / 50% 45% 55% 50%" }}
+                            className="w-full max-w-[460px] aspect-square mx-auto border border-[#d1d9e6] shadow-[8px_8px_20px_#b8c4d2,_-8px_-8px_20px_#ffffff] overflow-hidden"
+                            style={{ borderRadius: "63% 37% 70% 30% / 50% 45% 50% 55%" }}
                         >
                             <Image
                                 src="/about-us-1.jpg"
@@ -107,6 +107,7 @@ export default function AboutPage() {
                                 width={600}
                                 height={460}
                                 className="w-full h-full object-cover"
+                                style={{ borderRadius: "63% 37% 70% 30% / 50% 45% 50% 55%" }}
                             />
                         </div>
                     </div>
