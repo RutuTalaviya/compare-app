@@ -181,8 +181,8 @@ export default function QuickCompare() {
                   key={category._id}
                   onClick={() => handleCategoryClick(category)}
                   className={`px-5 py-2.5 rounded-xl text-sm font-bold border border-[#d1d9e6] transition-all duration-300 cursor-pointer ${selectedCategory?._id === category._id
-                      ? "bg-[#e6e7ee] text-[#F98A1A] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
-                      : "bg-[#e6e7ee] text-[#555f6e] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[5px_5px_10px_#b8c4d2,_-5px_-5px_10px_#ffffff]"
+                    ? "bg-[#e6e7ee] text-[#F98A1A] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
+                    : "bg-[#e6e7ee] text-[#555f6e] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[5px_5px_10px_#b8c4d2,_-5px_-5px_10px_#ffffff]"
                     }`}
                 >
                   {category.name}
@@ -198,8 +198,8 @@ export default function QuickCompare() {
                     key={sub._id}
                     onClick={() => handleSubCategoryClick(sub)}
                     className={`px-5 py-2 rounded-xl text-xs font-bold border border-[#d1d9e6] transition-all duration-300 cursor-pointer ${selectedSubCategory?._id === sub._id
-                        ? "bg-[#e6e7ee] text-[#F98A1A] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
-                        : "bg-[#e6e7ee] text-[#555f6e] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[5px_5px_10px_#b8c4d2,_-5px_-5px_10px_#ffffff]"
+                      ? "bg-[#e6e7ee] text-[#F98A1A] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
+                      : "bg-[#e6e7ee] text-[#555f6e] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[5px_5px_10px_#b8c4d2,_-5px_-5px_10px_#ffffff]"
                       }`}
                   >
                     {sub.name}
@@ -283,8 +283,8 @@ export default function QuickCompare() {
                               : handleAddCompare(product)
                           }
                           className={`absolute top-3 right-3 w-11 h-11 rounded-full border border-[#d1d9e6] flex items-center justify-center transition-all duration-300 ${isInCompare
-                              ? "bg-[#e6e7ee] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
-                              : "bg-[#e6e7ee] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] hover:shadow-[6px_6px_12px_#b8c4d2,_-6px_-6px_12px_#ffffff]"
+                            ? "bg-[#e6e7ee] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
+                            : "bg-[#e6e7ee] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] hover:shadow-[6px_6px_12px_#b8c4d2,_-6px_-6px_12px_#ffffff]"
                             }`}
                         >
                           {isInCompare ? (
@@ -434,57 +434,59 @@ export default function QuickCompare() {
         )}
 
         {/* COMPARE MODAL */}
+        {/* COMPARE MODAL */}
         {showCompare && (
-          <div className="fixed inset-0 bg-black/30 z-50 flex items-end md:items-center justify-center px-0 md:px-4">
-            <div className="w-full md:max-w-[680px] bg-[#e6e7ee] rounded-t-3xl md:rounded-3xl border border-[#d1d9e6] shadow-[8px_8px_24px_#b8c4d2,_-8px_-8px_24px_#ffffff] overflow-hidden">
+          <div className="fixed inset-0 bg-transparent z-50 flex items-end md:items-center justify-center px-0 md:px-4">
+            <div className="w-full md:max-w-[720px] bg-[#e6e7ee] rounded-t-3xl md:rounded-3xl border border-[#d1d9e6] shadow-[8px_8px_24px_#b8c4d2,_-8px_-8px_24px_#ffffff] overflow-hidden">
+
               {/* MODAL HEADER */}
-              <div className="bg-[#e6e7ee] border-b border-[#d1d9e6] px-5 py-4 flex items-center justify-between">
+              <div className="bg-[#e6e7ee] border-b border-[#d1d9e6] px-4 py-3 flex items-center justify-between shadow-[0_4px_8px_#b8c4d2]">
                 <div className="flex items-center gap-3">
-                  <div className="bg-[#F98A1A] text-white font-black w-9 h-9 flex items-center justify-center rounded-full shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] text-xs">
+                  <div className="w-8 h-8 bg-[#F98A1A] rounded-full flex items-center justify-center shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] text-white font-black text-xs">
                     VS
                   </div>
-                  <h2 className="font-black text-lg text-[#313842]">
-                    Comparison list ({compareList.length})
-                  </h2>
+                  <div>
+                    <h2 className="font-black text-sm text-[#313842]">Comparison List</h2>
+                    <p className="text-[10px] text-gray-500 font-semibold">{compareList.length} products selected</p>
+                  </div>
                 </div>
                 <button
                   onClick={() => setShowCompare(false)}
-                  className="w-8 h-8 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors font-bold"
+                  className="w-7 h-7 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2,_inset_-2px_-2px_4px_#ffffff] flex items-center justify-center text-gray-500 hover:text-red-500 transition-all font-bold text-xs"
                 >
                   ✕
                 </button>
               </div>
 
               {/* MODAL BODY */}
-              <div className="p-4 space-y-3 max-h-[55vh] overflow-y-auto">
+              <div className="p-3 space-y-2 max-h-[25vh] md:max-h-[40vh] overflow-y-auto">
                 {compareList.map((item) => (
                   <div
                     key={item._id}
-                    className="flex items-center justify-between bg-[#e6e7ee] rounded-2xl p-3 border border-[#d1d9e6] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff]"
+                    className="flex items-center justify-between bg-[#e6e7ee] rounded-xl p-3 border border-[#d1d9e6] shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff]"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-[#e6e7ee] rounded-xl border border-[#d1d9e6] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff] flex items-center justify-center p-1 overflow-hidden">
+                      <div className="w-10 h-10 bg-[#e6e7ee] rounded-xl border border-[#d1d9e6] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff] flex items-center justify-center overflow-hidden p-1 shrink-0">
                         <Image
                           src={getImageSrc(item)}
                           alt={item.title}
-                          width={45}
-                          height={45}
+                          width={40}
+                          height={40}
                           className="object-contain w-full h-full"
                         />
                       </div>
                       <div>
-                        <p className="font-black text-[#313842] line-clamp-1 text-sm">
+                        <p className="font-black text-[#313842] line-clamp-1 text-xs">
                           {item.title}
                         </p>
-                        <p className="text-xs text-[#F98A1A] font-bold">
-                          {item.currency}
-                          {item.price?.toLocaleString("en-IN")}
+                        <p className="text-xs text-[#F98A1A] font-black">
+                          {item.currency}{item.price?.toLocaleString("en-IN")}
                         </p>
                       </div>
                     </div>
                     <button
                       onClick={() => handleRemoveCompare(item._id)}
-                      className="w-8 h-8 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors font-bold text-lg"
+                      className="w-7 h-7 rounded-full bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2,_inset_-2px_-2px_4px_#ffffff] flex items-center justify-center text-gray-400 hover:text-red-500 transition-all font-bold shrink-0"
                     >
                       ×
                     </button>
@@ -493,14 +495,17 @@ export default function QuickCompare() {
               </div>
 
               {/* MODAL FOOTER */}
-              <div className="p-4 border-t border-[#d1d9e6]">
-                <button
-                  onClick={handleCompare}
-                  className="w-full bg-[#F98A1A] text-white rounded-2xl py-3.5 font-black text-base shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] hover:bg-[#e0740d] active:shadow-[inset_3px_3px_6px_rgba(0,0,0,0.15)] transition-all duration-300"
-                >
-                  Compare Now ({compareList.length})
-                </button>
+              <div className="p-3 border-t border-[#d1d9e6] bg-[#e6e7ee]">
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCompare}
+                    className="flex-1 py-2.5 rounded-xl bg-[#F98A1A] text-white font-black text-xs shadow-[4px_4px_8px_#b8c4d2,_-4px_-4px_8px_#ffffff] hover:bg-[#e0740d] active:shadow-[inset_3px_3px_6px_rgba(0,0,0,0.2)] transition-all duration-300"
+                  >
+                    Compare Now ({compareList.length})
+                  </button>
+                </div>
               </div>
+
             </div>
           </div>
         )}

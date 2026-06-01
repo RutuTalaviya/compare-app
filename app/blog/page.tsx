@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar"; // Ensure this path correctly points to your Navbar
+import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getArticles } from "../services/articleService";
 import { imageUrl } from "../config";
@@ -60,9 +60,9 @@ export default function BlogPage({ showBreadcrumb = true, isInline = false }) {
       {posts.map((post) => (
         <Link href={`/blog/${post.uniqueTitle}`} key={post._id} className="group block">
           {/* Neumorphic Card */}
-          <div className="bg-[#e8edf2] rounded-3xl p-4 shadow-[8px_8px_16px_#cfd6e0,-8px_-8px_16px_#ffffff] border border-white/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[12px_12px_20px_#cfd6e0,-12px_-12px_20px_#ffffff] h-full flex flex-col">
-            {/* Image Container with Inner Shadow styling */}
-            <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-5 bg-white shadow-[inset_0px_2px_4px_rgba(0,0,0,0.05)]">
+          <div className="bg-[#e8edf2] rounded-3xl p-4 shadow-[8px_8px_16px_#cfd6e0,-8px_-8px_16px_#ffffff] border border-white/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[12px_12px_20px_#cfd6e0,-12px_-12px_20px_#ffffff] flex flex-col">
+            {/* Image Container */}
+            <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-white shadow-[inset_0px_2px_4px_rgba(0,0,0,0.05)]">
               <img
                 src={getPostImageUrl(post.thumbnail)}
                 alt={post.title}
@@ -70,7 +70,7 @@ export default function BlogPage({ showBreadcrumb = true, isInline = false }) {
               />
             </div>
 
-            {/* Post Title - Now turns orange only on hover */}
+            {/* Post Title */}
             <h3 className="text-[15px] sm:text-[16px] font-semibold leading-snug px-1 pb-2 transition-colors duration-300 text-gray-800 group-hover:text-[#f97316]">
               {post.title}
             </h3>

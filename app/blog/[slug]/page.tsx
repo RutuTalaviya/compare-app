@@ -237,7 +237,7 @@ export default function BlogDetailsPage() {
               <img
                 src={getPostImageUrl(article.thumbnail)}
                 alt={article.title}
-                className="w-full h-auto max-h-[600px] object-cover rounded-xl"
+                className="w-full h-[45vh] object-cover rounded-xl"
               />
             </div>
           )}
