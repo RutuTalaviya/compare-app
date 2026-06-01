@@ -20,7 +20,7 @@ export default function PartnershipPage() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await getSetting();
+                const response: any = await getSetting();
                 setData(response?.data?.partnerships || []);
             } catch (error) {
                 console.log("Partnership fetch error:", error);

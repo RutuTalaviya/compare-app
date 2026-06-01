@@ -20,7 +20,7 @@ export default function EditorialGuidelinesPage() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await getSetting();
+                const response: any = await getSetting();
                 setData(response?.data?.editorialGuidelines || []);
             } catch (error) {
                 console.log("Editorial Guidelines fetch error:", error);

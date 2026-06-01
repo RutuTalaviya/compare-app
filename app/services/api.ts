@@ -13,7 +13,7 @@ export const apiInstance = axios.create({
 console.log("BASE_URL checking:", BASE_URL);
 // Response Interceptor
 apiInstance.interceptors.response.use(
-    (response) => response.data,
+    (response: any) => response.data as any,
     (error) => {
         if (typeof window !== "undefined") {
             const errorData = error?.response?.data;

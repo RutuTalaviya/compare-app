@@ -108,7 +108,7 @@ export default function SubCategoryUI() {
       setLoading(true);
       const response = await getSubCategoryWiseProducts(uniqueName);
       console.log("Products :", response);
-      setProducts(response || []);
+      setProducts((response as any) || []);
     } catch (error) {
       console.log("Fetch Product Error :", error);
       setProducts([]);

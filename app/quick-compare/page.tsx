@@ -85,7 +85,7 @@ export default function QuickCompare() {
 
   const fetchCategories = async () => {
     try {
-      const response = await getCategories();
+      const response: any = await getCategories();
       console.log("CATEGORY RESPONSE :", response);
       const categoryData = response?.data || [];
       setCategories(categoryData);
@@ -108,7 +108,7 @@ export default function QuickCompare() {
       setLoading(true);
       const response = await getSubCategoryWiseProducts(uniqueName);
       console.log("PRODUCT RESPONSE :", response);
-      setProducts(response || []);
+      setProducts((response as any) || []);
     } catch (error) {
       console.log("PRODUCT ERROR :", error);
       setProducts([]);

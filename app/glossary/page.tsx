@@ -47,7 +47,7 @@ export default function GlossaryPage() {
 
       setLoading(true);
 
-      const response =
+      const response: any =
         await getGroupedArticles();
 
       if (response?.status) {
@@ -131,7 +131,7 @@ export default function GlossaryPage() {
 
       setRedirectLoading(title);
 
-      const response =
+      const response: any =
         await searchArticles(title);
 
       if (

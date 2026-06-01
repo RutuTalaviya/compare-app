@@ -44,7 +44,7 @@ export default function CategoriesPage() {
       const response = await getCategories();
 
       if (response?.status) {
-        setCategories(response.data || []);
+        setCategories((response as any).data || []);
       }
     } catch (error) {
       console.log("Category fetch error:", error);

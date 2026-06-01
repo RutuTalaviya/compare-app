@@ -45,7 +45,7 @@ export default function ComparePage() {
 
       try {
         setIsLoading(true);
-        const response = await compareProducts(uniqueTitles);
+        const response: any = await compareProducts(uniqueTitles);
         setCompareData(response);
 
         if (response?.data?.comparedProducts?.length > 0) {

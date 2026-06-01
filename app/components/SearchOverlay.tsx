@@ -53,7 +53,7 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
       }
 
       setLoadingIndex(index);
-      const response = await searchProducts(value);
+      const response: any = await searchProducts(value);
       const updatedResults = [...results];
       updatedResults[index] = response?.data || [];
       setResults(updatedResults);

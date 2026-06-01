@@ -3,14 +3,19 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "./components/Navbar";
-import { Plus, X, ArrowRight, BookOpen, Sparkles } from "lucide-react";
+import { Plus, X, ArrowRight, BookOpen, Sparkles, Loader2 } from "lucide-react";
 import Footer from "./components/Footer";
 import BlogPage from "./blog/page";
 import { getCategories } from "./services/categoryService";
+import SimpleHeader from "./components/SimpleHeader";
+import DefaultPage from "./components/DefaultPage";
 
 export default function Home() {
   const router = useRouter();
   const [categories, setCategories] = useState<any[]>([]);
+  const [showDefaultPage, setShowDefaultPage] = useState<boolean>(true);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
+
   // UPDATED: Changed from 3 slots to 4 slots
   const slots = [1, 2, 3, 4];
   const fetchCategories = async () => {
@@ -27,7 +32,45 @@ export default function Home() {
 
   useEffect(() => {
     fetchCategories();
+
+    // Check onboarding visit state in localStorage
+    try {
+      const hasVisited = localStorage.getItem("hasVisitedHomePage");
+      if (!hasVisited) {
+        setShowDefaultPage(true);
+      } else {
+        setShowDefaultPage(false);
+      }
+    } catch (error) {
+      // Fallback to onboarding if localStorage is not accessible
+      setShowDefaultPage(true);
+    } finally {
+      setIsInitialized(true);
+    }
   }, []);
+
+  if (!isInitialized) {
+    return (
+      <main className="min-h-screen bg-[#e6e7ee] pt-[90px] pb-0 select-none flex flex-col justify-between">
+        <SimpleHeader />
+        <div className="flex flex-col items-center justify-center flex-grow py-20 gap-3">
+          <Loader2 className="h-10 w-10 text-[#F98A1A] animate-spin" />
+          <span className="text-sm font-bold text-gray-500">Initializing Comparison Hub...</span>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
+
+  if (showDefaultPage) {
+    return (
+      <main className="min-h-screen bg-[#e6e7ee] pt-[90px] pb-0 select-none flex flex-col justify-between">
+        <SimpleHeader />
+        <DefaultPage />
+        <Footer />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#e6e7ee] pt-[90px] pb-0 select-none">

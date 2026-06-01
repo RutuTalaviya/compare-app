@@ -51,7 +51,7 @@ const Navbar = () => {
     try {
       setLoading(true);
 
-      const response = await getCategories();
+      const response: any = await getCategories();
 
       console.log("Full Response:", response);
 
