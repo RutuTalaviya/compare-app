@@ -82,8 +82,8 @@ const DefaultPage = () => {
   };
 
   const handleProceed = () => {
-    if (selectedCategories.length < 1) {
-      Centerwarning("Select any one category then you will be processed.");
+    if (selectedCategories.length !== 3) {
+      Centerwarning("Select any 3 category then you will be proceed");
       return;
     }
 
@@ -105,7 +105,7 @@ const DefaultPage = () => {
   const minCategoriesSelected = selectedCategories.length >= 3;
 
   return (
-    <div className="flex justify-center gap-6 px-4 mb-20 mt-6 max-w-[900px] mx-auto select-none">
+    <div className="w-full max-w-[1400px] mx-auto px-5 lg:px-8 mb-20 mt-6 select-none flex justify-center">
       <div className="w-full flex flex-col gap-8">
         
         {/* Main Category Selection Card */}
@@ -119,7 +119,7 @@ const DefaultPage = () => {
               Choose some favorite categories <br /> you might compare
             </h1>
             <p className="text-xs text-gray-500 mt-2">
-              Select up to 3 topics to tailor your side-by-side comparison experience.
+              Select exactly 3 topics to tailor your side-by-side comparison experience.
             </p>
           </div>
 
@@ -156,7 +156,7 @@ const DefaultPage = () => {
             <button
               onClick={handleProceed}
               className={`px-12 py-3.5 text-sm sm:text-base font-black uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center gap-2 cursor-pointer ${
-                selectedCategories.length >= 1
+                selectedCategories.length === 3
                   ? "bg-[#F98A1A] text-white shadow-soft hover:bg-[#e0740d] active:shadow-[inset_3px_3px_6px_rgba(0,0,0,0.2)]"
                   : "bg-gray-300 text-gray-400 border border-gray-400/20 shadow-none cursor-not-allowed opacity-50"
               }`}
@@ -164,10 +164,10 @@ const DefaultPage = () => {
               Proceed
               <ArrowRight className="h-4 w-4" />
             </button>
-            <p className="text-[10px] text-gray-500 mt-2">
-              {selectedCategories.length === 0 
-                ? "Select at least 1 category to continue."
-                : `${selectedCategories.length} of 3 categories selected.`}
+            <p className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-wider">
+              {selectedCategories.length === 3 
+                ? "3 of 3 selected. You are ready to proceed!" 
+                : `Please select 3 categories (currently ${selectedCategories.length} selected).`}
             </p>
           </div>
         </div>
