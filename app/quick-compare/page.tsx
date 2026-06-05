@@ -121,6 +121,13 @@ export default function QuickCompare() {
     setCompareList((prev) => {
       const exists = prev.find((p) => p._id === product._id);
       if (exists) return prev;
+
+      // Limit to 4 products maximum
+      if (prev.length >= 4) {
+        DangerRight("You can only compare up to 4 products at a time.");
+        return prev;
+      }
+
       return [...prev, product];
     });
   };
@@ -199,7 +206,7 @@ export default function QuickCompare() {
                     onClick={() => handleSubCategoryClick(sub)}
                     className={`px-5 py-2 rounded-xl text-xs font-bold border border-[#d1d9e6] transition-all duration-300 cursor-pointer ${selectedSubCategory?._id === sub._id
                       ? "bg-[#e6e7ee] text-[#F98A1A] shadow-[inset_3px_3px_6px_#b8c4d2,_inset_-3px_-3px_6px_#ffffff]"
-                      : "bg-[#e6e7ee] text-[#555f6e] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[5px_5px_10px_#b8c4d2,_-5px_-5px_10px_#ffffff]"
+                      : "bg-[#e6e7ee] text-[#555f6e] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[5px_5px_10px_#b8c4d2,_-5px_-5px_10px_#b8c4d2,_-5px_-5px_10px_#ffffff]"
                       }`}
                   >
                     {sub.name}
@@ -269,7 +276,7 @@ export default function QuickCompare() {
                             <span className="text-sm font-black text-[#F98A1A] leading-none z-10">
                               {product.scoreValue}
                             </span>
-                            <span className="text-[8px] font-bold uppercase text-gray-500 z-10">
+                            <span className="text-[10px] font-bold uppercase text-gray-500 z-10">
                               Points
                             </span>
                           </div>
@@ -380,24 +387,24 @@ export default function QuickCompare() {
           </div>
         </div>
 
-        {/* STICKY COMPARE BAR */}
+        {/* STICKY COMPARE BAR - Completely Orange */}
         {compareList.length > 0 && (
-          <div className="fixed bottom-4 left-0 w-full z-50 px-4">
+          <div className="fixed bottom-4 left-0 w-full z-40 px-4">
             <div
               onClick={() => setShowCompare(true)}
-              className="max-w-2xl mx-auto bg-[#e6e7ee] border border-[#d1d9e6] shadow-[6px_6px_16px_#b8c4d2,_-6px_-6px_16px_#ffffff] px-4 py-3 flex items-center justify-between cursor-pointer rounded-2xl hover:shadow-[8px_8px_20px_#b8c4d2,_-8px_-8px_20px_#ffffff] transition-all duration-300"
+              className="max-w-2xl mx-auto bg-[#F98A1A] border border-[#e07b16] shadow-[0_8px_30px_rgba(249,138,26,0.4)] px-4 py-3 flex items-center justify-between cursor-pointer rounded-2xl hover:shadow-[0_12px_40px_rgba(249,138,26,0.6)] transition-all duration-300"
             >
               {/* LEFT */}
               <div className="flex items-center gap-3">
-                <div className="bg-[#F98A1A] text-white font-black w-10 h-10 flex items-center justify-center rounded-full shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] text-xs">
+                <div className="bg-white text-[#F98A1A] font-black w-10 h-10 flex items-center justify-center rounded-full shadow-sm text-xs">
                   VS
                 </div>
                 <div className="leading-tight">
-                  <p className="font-black text-sm md:text-base text-[#313842]">
+                  <p className="font-black text-sm md:text-base text-white">
                     Comparison List
                   </p>
-                  <p className="text-xs text-gray-500">
-                    {compareList.length} products added
+                  <p className="text-xs text-orange-100 font-medium">
+                    {compareList.length} products added (Max 4)
                   </p>
                 </div>
               </div>
@@ -407,38 +414,40 @@ export default function QuickCompare() {
                 {compareList.slice(0, 3).map((item) => (
                   <div
                     key={item._id}
-                    className="w-10 h-10 bg-[#e6e7ee] rounded-xl border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] p-1"
+                    className="w-10 h-10 bg-white rounded-xl shadow-sm p-1"
                   >
                     <Image
                       src={getImageSrc(item)}
                       alt={item.title}
                       width={40}
                       height={40}
-                      className="object-contain w-full h-full"
+                      className="object-contain w-full h-full rounded-lg"
                     />
                   </div>
                 ))}
                 {compareList.length > 3 && (
-                  <div className="w-10 h-10 bg-[#e6e7ee] border border-[#d1d9e6] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] text-[#F98A1A] font-bold flex items-center justify-center rounded-xl text-sm">
+                  <div className="w-10 h-10 bg-[#e07b16] border border-[#f08518] text-white font-bold flex items-center justify-center rounded-xl text-sm shadow-inner">
                     +{compareList.length - 3}
                   </div>
                 )}
               </div>
 
               {/* RIGHT ARROW */}
-              <div className="w-9 h-9 rounded-full bg-[#F98A1A] flex items-center justify-center shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff]">
-                <ChevronRight className="w-4 h-4 text-white" />
+              <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-sm">
+                <ChevronRight className="w-5 h-5 text-[#F98A1A]" strokeWidth={3} />
               </div>
             </div>
           </div>
         )}
 
-        {/* COMPARE MODAL */}
-        {/* COMPARE MODAL */}
+        {/* COMPARE MODAL - Black background overlay */}
         {showCompare && (
-          <div className="fixed inset-0 bg-transparent z-50 flex items-end md:items-center justify-center px-0 md:px-4">
-            <div className="w-full md:max-w-[720px] bg-[#e6e7ee] rounded-t-3xl md:rounded-3xl border border-[#d1d9e6] shadow-[8px_8px_24px_#b8c4d2,_-8px_-8px_24px_#ffffff] overflow-hidden">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end md:items-center justify-center px-0 md:px-4">
 
+            {/* Clicking outside the modal closes it */}
+            <div className="absolute inset-0" onClick={() => setShowCompare(false)} />
+
+            <div className="relative w-full md:max-w-[720px] bg-[#e6e7ee] rounded-t-3xl md:rounded-3xl border border-[#d1d9e6] shadow-2xl overflow-hidden z-10 animate-in slide-in-from-bottom-10 fade-in duration-300">
               {/* MODAL HEADER */}
               <div className="bg-[#e6e7ee] border-b border-[#d1d9e6] px-4 py-3 flex items-center justify-between shadow-[0_4px_8px_#b8c4d2]">
                 <div className="flex items-center gap-3">
@@ -447,7 +456,7 @@ export default function QuickCompare() {
                   </div>
                   <div>
                     <h2 className="font-black text-sm text-[#313842]">Comparison List</h2>
-                    <p className="text-[10px] text-gray-500 font-semibold">{compareList.length} products selected</p>
+                    <p className="text-[10px] text-gray-500 font-semibold">{compareList.length}/4 products selected</p>
                   </div>
                 </div>
                 <button
@@ -459,7 +468,7 @@ export default function QuickCompare() {
               </div>
 
               {/* MODAL BODY */}
-              <div className="p-3 space-y-2 max-h-[25vh] md:max-h-[40vh] overflow-y-auto">
+              <div className="p-3 space-y-2 max-h-[50vh] md:max-h-[40vh] overflow-y-auto">
                 {compareList.map((item) => (
                   <div
                     key={item._id}

@@ -55,7 +55,7 @@ const Navbar = () => {
 
       console.log("Full Response:", response);
 
-        if (response?.status) {
+      if (response?.status) {
         setCategories(response.data);
 
         console.log("Categories:", response.data);
@@ -188,7 +188,7 @@ const Navbar = () => {
                   </Link>
 
                   <Link
-                    href="/terms-and-conditions"
+                    href="/terms-conditions"
                     className="px-4 py-2.5 text-sm text-gray-800 hover:bg-gray-100 hover:text-black transition-colors font-medium"
                   >
                     Terms & Conditions
@@ -258,17 +258,15 @@ const Navbar = () => {
 
       {/* Mobile Overlay */}
       <div
-        className={`fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
-          isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
+        className={`fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm transition-opacity duration-300 lg:hidden ${isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
         onClick={() => setIsMobileMenuOpen(false)}
       />
 
       {/* Mobile Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-[300px] sm:w-[340px] bg-[#1f1f1f] z-[70] shadow-2xl transform transition-transform duration-300 ease-in-out overflow-y-auto lg:hidden ${
-          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 h-full w-[300px] sm:w-[340px] bg-[#1f1f1f] z-[70] shadow-2xl transform transition-transform duration-300 ease-in-out overflow-y-auto lg:hidden ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 h-[64px] border-b border-zinc-800">
@@ -298,19 +296,17 @@ const Navbar = () => {
               </div>
 
               <ChevronDown
-                className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${
-                  isMobileCategoriesOpen ? "rotate-180" : ""
-                }`}
+                className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isMobileCategoriesOpen ? "rotate-180" : ""
+                  }`}
               />
             </button>
 
             {/* MOBILE ONLY SEE ALL */}
             <div
-              className={`overflow-hidden transition-all duration-300 ${
-                isMobileCategoriesOpen
+              className={`overflow-hidden transition-all duration-300 ${isMobileCategoriesOpen
                   ? "max-h-[200px] opacity-100 mt-3"
                   : "max-h-0 opacity-0"
-              }`}
+                }`}
             >
               <Link
                 href="/categories"
@@ -345,16 +341,14 @@ const Navbar = () => {
               <span>More</span>
 
               <ChevronDown
-                className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${
-                  isMobileMoreOpen ? "rotate-180" : ""
-                }`}
+                className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isMobileMoreOpen ? "rotate-180" : ""
+                  }`}
               />
             </button>
 
             <div
-              className={`flex flex-col gap-3 pl-4 mt-2 border-l border-zinc-700 overflow-hidden transition-all duration-300 ${
-                isMobileMoreOpen ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
-              }`}
+              className={`flex flex-col gap-3 pl-4 mt-2 border-l border-zinc-700 overflow-hidden transition-all duration-300 ${isMobileMoreOpen ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
+                }`}
             >
               <Link
                 href="/privacy-policy"

@@ -85,19 +85,19 @@ const Footer = () => {
             Legal
           </h4>
           <Link
-            href="/imprint"
+            href="/impressum"
             className="text-gray-400 hover:text-white transition-colors"
           >
             Imprint
           </Link>
           <Link
-            href="/privacy"
+            href="/privacy-policy"
             className="text-gray-400 hover:text-white transition-colors"
           >
             Privacy
           </Link>
           <Link
-            href="/terms"
+            href="/terms-conditions"
             className="text-gray-400 hover:text-white transition-colors"
           >
             Terms
@@ -108,9 +108,14 @@ const Footer = () => {
           >
             Cookies
           </Link>
+          <Link
+            href="/Consent"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            Consent
+          </Link>
         </div>
 
-        {/* Column 5: Branding & Socials */}
         {/* Column 5: Branding & Socials */}
         <div className="flex flex-col gap-4 items-center md:items-start">
           <Link href="/" className="flex items-center gap-2">

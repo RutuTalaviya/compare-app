@@ -191,7 +191,7 @@ export default function ComparePage() {
       <Navbar />
 
       <main className="flex-grow pt-24 pb-16 px-5 lg:px-8 max-w-[1400px] mx-auto w-full relative">
-        {/* ================= FIXED TOP HEADER ================= */}
+        {/*  FIXED TOP HEADER  */}
         <div className="sticky top-[64px] md:top-[72px] z-40 bg-[#e6e7ee] p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-[#d1d9e6] shadow-[6px_6px_12px_#b8c4d2,-6px_-6px_12px_#ffffff] mb-6 flex justify-between items-start">
           <div className="w-full">
             <div className="text-[10px] md:text-[12px] font-medium text-gray-500 mb-2 md:mb-3 flex items-center gap-1 md:gap-2 flex-wrap">
@@ -200,11 +200,11 @@ export default function ComparePage() {
               </Link>
               <span>&gt;</span>
               <Link
-                href={`/categories/${products[0]?.subCategoryId?.uniqueName || "smartphone"
+                href={`/categories/${products[0]?.subCategoryId?.uniqueName || ""
                   }`}
                 className="hover:text-[#F98A1A] transition-colors"
               >
-                {products[0]?.subCategoryId?.name || "Smartphone"}
+                {products[0]?.subCategoryId?.name || ""}
               </Link>
               <span>&gt;</span>
               <span className="text-gray-700 font-bold truncate">

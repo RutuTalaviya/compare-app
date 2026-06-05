@@ -2,33 +2,33 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation"; // 1. Added useRouter for navigation
+import { useRouter } from "next/navigation";
 import { X, ArrowRight, Search } from "lucide-react";
 import { searchProducts } from "../services/productService";
 import { imageUrl } from "../config";
+import { DangerRight } from "../utils/toast";
 
 interface SearchOverlayProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-// 2. Added uniqueTitle in Product Interface
 interface Product {
   _id: string;
   title: string;
-  uniqueTitle: string; 
+  uniqueTitle: string;
   thumbnail: string;
   price: number;
   currency: string;
 }
 
 const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
 
-  // Input values (Sirf text store karne ke liye)
+  // Input values
   const [inputs, setInputs] = useState<string[]>([""]);
 
-  // 3. New state: Selected products ka actual data store karne ke liye
+  // Selected products data
   const [selectedProducts, setSelectedProducts] = useState<(Product | null)[]>([null]);
 
   // Search results
@@ -95,13 +95,34 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
   /**
    * Select product
    */
-  // 4. Update kiya taaki pura product object accept kare, na ki sirf title string
   const handleSelectProduct = (index: number, product: Product) => {
+    // 1. Check if the product is already selected in another input box
+    const isDuplicate = selectedProducts.some(
+      (p, i) => i !== index && p?._id === product._id
+    );
+
+    if (isDuplicate) {
+      // Show popup error
+      DangerRight("This product is already added for comparison!");
+
+      // Clear the current input and close the dropdown for this index
+      const updatedInputs = [...inputs];
+      updatedInputs[index] = "";
+      setInputs(updatedInputs);
+
+      const updatedResults = [...results];
+      updatedResults[index] = [];
+      setResults(updatedResults);
+
+      return; // Stop execution so it doesn't get added
+    }
+
+    // 2. If not duplicate, proceed with normal selection
     const updatedInputs = [...inputs];
     updatedInputs[index] = product.title;
     setInputs(updatedInputs);
 
-    // Product ko state me save karo
+    // Save product to state
     const updatedSelected = [...selectedProducts];
     updatedSelected[index] = product;
     setSelectedProducts(updatedSelected);
@@ -141,7 +162,7 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
     setSelectedProducts(updatedSelected);
   };
 
-  // Valid compare items ab selected products se aayenge
+  // Valid compare items 
   const validSelectedItems = selectedProducts.filter((product) => product !== null) as Product[];
 
   // Disable compare button
@@ -153,23 +174,22 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
   const handleCompare = () => {
     if (isCompareDisabled) return;
 
-    // 5. Saare valid selected products ke uniqueTitle ko comma se separate karo
+    // Convert slugs to URL
     const slugs = validSelectedItems.map((item) => item.uniqueTitle).join(",");
-    
+
     console.log("Compare products slug:", slugs);
 
-    // Compare page pe navigate karo aur overlay band kardo
+    // Navigate and close overlay
     router.push(`/compare/${slugs}`);
-    onClose(); 
+    onClose();
   };
 
   return (
     <div
-      className={`fixed top-[64px] left-0 w-full h-[calc(100vh-64px)] bg-[#1a1a1a]/95 backdrop-blur-sm z-40 overflow-y-auto pb-24 transition-all duration-400 ease-in-out ${
-        isOpen
-          ? "opacity-100 visible translate-y-0"
-          : "opacity-0 invisible -translate-y-5"
-      }`}
+      className={`fixed top-[64px] left-0 w-full h-[calc(100vh-64px)] bg-[#1a1a1a]/95 backdrop-blur-sm z-40 overflow-y-auto pb-24 transition-all duration-400 ease-in-out ${isOpen
+        ? "opacity-100 visible translate-y-0"
+        : "opacity-0 invisible -translate-y-5"
+        }`}
     >
       <div className="w-full max-w-[800px] mx-auto px-4 sm:px-6 md:px-8 pt-8 md:pt-16 flex flex-col">
         {/* Input Container */}
@@ -214,13 +234,13 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                     {/* Remove Button */}
                     {(index < inputs.length - 1 ||
                       (isMaxReached && value.trim() !== "")) && (
-                      <button
-                        onClick={() => handleRemove(index)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors p-1"
-                      >
-                        <X className="w-4 h-4 md:w-5 md:h-5" />
-                      </button>
-                    )}
+                        <button
+                          onClick={() => handleRemove(index)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors p-1"
+                        >
+                          <X className="w-4 h-4 md:w-5 md:h-5" />
+                        </button>
+                      )}
                   </div>
 
                   {/* Search Results */}
@@ -271,11 +291,10 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                   <button
                     onClick={handleCompare}
                     disabled={isCompareDisabled}
-                    className={`shrink-0 font-semibold text-sm md:text-base px-4 md:px-6 py-3 md:py-3.5 rounded-lg flex items-center gap-2 shadow-md transition-all duration-200 ${
-                      isCompareDisabled
-                        ? "bg-[#3a3a3a] text-gray-500 cursor-not-allowed border border-zinc-700"
-                        : "bg-[#f97316] hover:bg-[#ea580c] text-white"
-                    }`}
+                    className={`shrink-0 font-semibold text-sm md:text-base px-4 md:px-6 py-3 md:py-3.5 rounded-lg flex items-center gap-2 shadow-md transition-all duration-200 ${isCompareDisabled
+                      ? "bg-[#3a3a3a] text-gray-500 cursor-not-allowed border border-zinc-700"
+                      : "bg-[#f97316] hover:bg-[#ea580c] text-white"
+                      }`}
                   >
                     Compare
                     <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
