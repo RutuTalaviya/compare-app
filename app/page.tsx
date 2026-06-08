@@ -203,7 +203,7 @@ export default function Home() {
 
           {/* Blog / Articles Section */}
           <div className="my-10">
-            <BlogPage showBreadcrumb={false} isInline={true} />
+            <BlogPage showBreadcrumb={false} isInline={true} limit={16} />
           </div>
         </div>
       </div>

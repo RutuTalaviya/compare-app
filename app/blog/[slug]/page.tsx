@@ -3,12 +3,21 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Navbar from "../../components/Navbar"; // Ensure this path points to your Navbar component
-import Footer from "../../components/Footer"; // Ensure this path points to your Footer component
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import { Send } from "lucide-react";
 import { getArticleDetails } from "../../services/articleService";
 import { imageUrl } from "../../config";
 
+
+const authors = [
+  { name: "Rahul Sharma", avatar: "https://i.pravatar.cc/150?img=11" },
+  { name: "Priya Mehta", avatar: "https://i.pravatar.cc/150?img=45" },
+  { name: "Arjun Verma", avatar: "https://i.pravatar.cc/150?img=33" },
+  { name: "Sneha Patel", avatar: "https://i.pravatar.cc/150?img=47" },
+  { name: "Vikram Nair", avatar: "https://i.pravatar.cc/150?img=60" },
+  { name: "Ananya Joshi", avatar: "https://i.pravatar.cc/150?img=25" },
+];
 // Custom SVG component for Facebook
 const FacebookIcon = ({ className }: { className?: string }) => (
   <svg
@@ -73,6 +82,13 @@ export default function BlogDetailsPage() {
   const [article, setArticle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const [randomAuthor] = useState(() => {
+    const index = slug
+      ? slug.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) % authors.length
+      : 0;
+    return authors[index];
+  });
+
   const fetchArticleDetails = async () => {
     try {
       setLoading(true);
@@ -125,7 +141,7 @@ export default function BlogDetailsPage() {
     return (
       <div className="min-h-screen bg-[#e8edf2] font-sans text-gray-800 flex flex-col">
         <Navbar />
-        <main className="flex-grow pt-28 px-5 md:px-8 w-full max-w-[1400px] mx-auto pb-16">
+        <main className="flex-grow pt-20 px-5 md:px-8 w-full max-w-[1400px] mx-auto pb-16">
           <div className="animate-pulse">
             <div className="h-6 bg-gray-300/60 rounded w-1/4 mb-8" />
             <div className="bg-[#e8edf2] rounded-3xl p-6 md:p-10 shadow-[8px_8px_16px_#cfd6e0,-8px_-8px_16px_#ffffff] border border-white/60">
@@ -192,14 +208,24 @@ export default function BlogDetailsPage() {
         {/* Main Neumorphic Card Container */}
         <article className="bg-[#e8edf2] rounded-3xl p-6 md:p-10 shadow-[8px_8px_16px_#cfd6e0,-8px_-8px_16px_#ffffff] border border-white/60">
           {/* Blog Title */}
-          <h1 className="text-3xl md:text-[42px] font-extrabold text-[#0a192f] leading-tight mb-8">
+          <h1 className="text-3xl md:text-[42px] font-extrabold text-[#0a192f] leading-tight mb-6">
             {article.title}
           </h1>
 
+          {/* Divider below title */}
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent mb-8" />
           {/* Author & Action Buttons Row */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-            <div className="text-sm font-semibold text-gray-500">
-              Published on {formatDate(article.createdAt)}
+            <div className="flex items-center gap-3">
+              <img
+                src={randomAuthor.avatar}
+                alt={randomAuthor.name}
+                className="w-11 h-11 rounded-full object-cover border-2 border-white/70 shadow-[3px_3px_6px_#cfd6e0,-3px_-3px_6px_#ffffff]"
+              />
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-[#0a192f]">{randomAuthor.name}</span>
+                <span className="text-xs text-gray-500">{formatDate(article.createdAt)}</span>
+              </div>
             </div>
 
             {/* Action Buttons Group */}

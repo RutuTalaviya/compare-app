@@ -164,7 +164,7 @@ const ContactPage = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="max-w-2xl mx-auto p-6 sm:p-8 bg-[#e6e7ee] border border-[#d1d9e6] rounded-2xl shadow-[inset_6px_6px_12px_#b8c4d2,_inset_-6px_-6px_12px_#ffffff]">
+          <div className="w-full p-6 sm:p-8 bg-[#e6e7ee] border border-[#d1d9e6] rounded-2xl shadow-[inset_6px_6px_12px_#b8c4d2,_inset_-6px_-6px_12px_#ffffff]">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Field */}
               <div className="relative">

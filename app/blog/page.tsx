@@ -7,7 +7,7 @@ import Footer from "../components/Footer";
 import { getArticles } from "../services/articleService";
 import { imageUrl } from "../config";
 
-export default function BlogPage({ showBreadcrumb = true, isInline = false }) {
+export default function BlogPage({ showBreadcrumb, isInline, limit }: { showBreadcrumb?: boolean; isInline?: boolean; limit?: number }) {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -57,7 +57,7 @@ export default function BlogPage({ showBreadcrumb = true, isInline = false }) {
     </div>
   ) : (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-      {posts.map((post) => (
+      {(limit ? posts.slice(0, limit) : posts).map((post) => (
         <Link href={`/blog/${post.uniqueTitle}`} key={post._id} className="group block">
           {/* Neumorphic Card */}
           <div className="bg-[#e8edf2] rounded-3xl p-4 shadow-[8px_8px_16px_#cfd6e0,-8px_-8px_16px_#ffffff] border border-white/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-[12px_12px_20px_#cfd6e0,-12px_-12px_20px_#ffffff] flex flex-col">
@@ -80,8 +80,23 @@ export default function BlogPage({ showBreadcrumb = true, isInline = false }) {
     </div>
   );
 
+  // Yahan par humne Inline ke liye condition add ki hai
   if (isInline) {
-    return blogContent;
+    return (
+      <div className="w-full flex flex-col items-center">
+        <div className="w-full">{blogContent}</div>
+
+        {/* Agar total posts limit (16) se jyada hain tabhi ye button dikhega */}
+        {!loading && limit && posts.length > limit && (
+          <Link
+            href="/blog"
+            className="mt-10 px-8 py-3.5 text-sm sm:text-base font-black uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2 bg-[#F98A1A] text-white shadow-[6px_6px_12px_#cfd6e0,-6px_-6px_12px_#ffffff] hover:bg-[#e0740d] hover:shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] active:shadow-[inset_4px_4px_8px_rgba(0,0,0,0.15)] cursor-pointer"
+          >
+            See All Blogs
+          </Link>
+        )}
+      </div>
+    );
   }
 
   return (
