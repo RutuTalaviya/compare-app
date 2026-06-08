@@ -40,7 +40,6 @@ export default function ComparePage() {
   // API Fetch Effect
   useEffect(() => {
     const fetchComparisonData = async () => {
-      // Jab tak URL params na mile, hold karo
       if (!uniqueTitles) return;
 
       try {
@@ -62,7 +61,6 @@ export default function ComparePage() {
       } catch (error) {
         console.error("Failed to load comparison data:", error);
       } finally {
-        // Finally hamesha run hoga, jisse loading state false ho jayegi
         setIsLoading(false);
       }
     };
