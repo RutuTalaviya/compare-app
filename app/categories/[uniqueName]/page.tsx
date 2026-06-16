@@ -68,6 +68,7 @@ export default function SubCategoryUI() {
   const [loading, setLoading] = useState(false);
   const [compareList, setCompareList] = useState<Product[]>([]);
   const [showCompare, setShowCompare] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const iconMap: Record<IconKey, any> = {
     battery: BatteryCharging,
@@ -121,7 +122,19 @@ export default function SubCategoryUI() {
     if (uniqueName) {
       fetchProducts();
     }
+    // Load compareList from localStorage
+    const stored = localStorage.getItem("quickCompareList");
+    if (stored) {
+      setCompareList(JSON.parse(stored));
+    }
+    setIsLoaded(true);
   }, [uniqueName]);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("quickCompareList", JSON.stringify(compareList));
+    }
+  }, [compareList, isLoaded]);
 
   const handleFilterChange = (filters: any) => {
     console.log("Filters Updated:", filters);

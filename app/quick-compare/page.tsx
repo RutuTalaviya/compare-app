@@ -69,6 +69,7 @@ export default function QuickCompare() {
   const [compareList, setCompareList] = useState<Product[]>([]);
   const [showCompare, setShowCompare] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const handleCompare = () => {
     if (compareList.length < 2) {
@@ -81,7 +82,19 @@ export default function QuickCompare() {
 
   useEffect(() => {
     fetchCategories();
+    // Load compareList from localStorage
+    const stored = localStorage.getItem("quickCompareList");
+    if (stored) {
+      setCompareList(JSON.parse(stored));
+    }
+    setIsLoaded(true);
   }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("quickCompareList", JSON.stringify(compareList));
+    }
+  }, [compareList, isLoaded]);
 
   const fetchCategories = async () => {
     try {

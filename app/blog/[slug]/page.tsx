@@ -9,7 +9,6 @@ import { Send } from "lucide-react";
 import { getArticleDetails } from "../../services/articleService";
 import { imageUrl } from "../../config";
 
-
 const authors = [
   { name: "Rahul Sharma", avatar: "https://i.pravatar.cc/150?img=11" },
   { name: "Priya Mehta", avatar: "https://i.pravatar.cc/150?img=45" },
@@ -18,6 +17,7 @@ const authors = [
   { name: "Vikram Nair", avatar: "https://i.pravatar.cc/150?img=60" },
   { name: "Ananya Joshi", avatar: "https://i.pravatar.cc/150?img=25" },
 ];
+
 // Custom SVG component for Facebook
 const FacebookIcon = ({ className }: { className?: string }) => (
   <svg
@@ -84,7 +84,8 @@ export default function BlogDetailsPage() {
 
   const [randomAuthor] = useState(() => {
     const index = slug
-      ? slug.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) % authors.length
+      ? slug.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
+        authors.length
       : 0;
     return authors[index];
   });
@@ -147,11 +148,18 @@ export default function BlogDetailsPage() {
             <div className="bg-[#e8edf2] rounded-3xl p-6 md:p-10 shadow-[8px_8px_16px_#cfd6e0,-8px_-8px_16px_#ffffff] border border-white/60">
               <div className="h-10 bg-gray-300/60 rounded w-3/4 mb-8" />
               <div className="h-6 bg-gray-300/60 rounded w-1/3 mb-10" />
-              <div className="w-full aspect-[21/9] bg-gray-300/60 rounded-xl mb-10" />
-              <div className="space-y-4">
-                <div className="h-4 bg-gray-300/60 rounded w-full" />
-                <div className="h-4 bg-gray-300/60 rounded w-full" />
-                <div className="h-4 bg-gray-300/60 rounded w-5/6" />
+
+              {/* Updated Layout Skeleton */}
+              <div className="block w-full">
+                <div className="w-full md:w-1/2 lg:w-5/12 md:float-left md:mr-8 mb-6 md:mb-4 aspect-[4/3] bg-gray-300/60 rounded-xl" />
+                <div className="space-y-4 pt-2">
+                  <div className="h-4 bg-gray-300/60 rounded w-full" />
+                  <div className="h-4 bg-gray-300/60 rounded w-full" />
+                  <div className="h-4 bg-gray-300/60 rounded w-5/6" />
+                  <div className="h-4 bg-gray-300/60 rounded w-full" />
+                  <div className="h-4 bg-gray-300/60 rounded w-4/5" />
+                </div>
+                <div className="clear-both"></div>
               </div>
             </div>
           </div>
@@ -168,7 +176,10 @@ export default function BlogDetailsPage() {
         <main className="flex-grow pt-28 px-5 md:px-8 w-full max-w-[1400px] mx-auto pb-16 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
-            <Link href="/blog" className="text-[#f97316] font-bold hover:underline">
+            <Link
+              href="/blog"
+              className="text-[#f97316] font-bold hover:underline"
+            >
               Back to Blog
             </Link>
           </div>
@@ -214,6 +225,7 @@ export default function BlogDetailsPage() {
 
           {/* Divider below title */}
           <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent mb-8" />
+
           {/* Author & Action Buttons Row */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
             <div className="flex items-center gap-3">
@@ -223,8 +235,12 @@ export default function BlogDetailsPage() {
                 className="w-11 h-11 rounded-full object-cover border-2 border-white/70 shadow-[3px_3px_6px_#cfd6e0,-3px_-3px_6px_#ffffff]"
               />
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-[#0a192f]">{randomAuthor.name}</span>
-                <span className="text-xs text-gray-500">{formatDate(article.createdAt)}</span>
+                <span className="text-sm font-bold text-[#0a192f]">
+                  {randomAuthor.name}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {formatDate(article.createdAt)}
+                </span>
               </div>
             </div>
 
@@ -257,30 +273,35 @@ export default function BlogDetailsPage() {
             </div>
           </div>
 
-          {/* Hero Image Container */}
-          {article.thumbnail && (
-            <div className="w-full rounded-2xl bg-[#e8edf2] shadow-[inset_4px_4px_8px_#cfd6e0,inset_-4px_-4px_8px_#ffffff] p-2 md:p-3 mb-10">
-              <img
-                src={getPostImageUrl(article.thumbnail)}
-                alt={article.title}
-                className="w-full h-[45vh] object-cover rounded-xl"
-              />
-            </div>
-          )}
+          {/* Floated Image and Text Wrapper */}
+          <div className="block w-full">
+            {article.thumbnail && (
+              <div className="w-full md:w-1/2 lg:w-5/12 md:float-left md:mr-8 mb-6 md:mb-4 rounded-2xl bg-[#e8edf2] shadow-[inset_4px_4px_8px_#cfd6e0,inset_-4px_-4px_8px_#ffffff] p-2 md:p-3">
+                <img
+                  src={getPostImageUrl(article.thumbnail)}
+                  alt={article.title}
+                  className="w-full h-auto object-cover rounded-xl"
+                />
+              </div>
+            )}
 
-          {/* Blog Content */}
-          <div
-            className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[15px] sm:text-base text-gray-800 leading-relaxed font-medium space-y-6
-              prose-headings:text-[#0a192f] prose-headings:font-black
-              prose-p:text-gray-700 prose-p:leading-[2]
-              prose-img:rounded-2xl prose-img:shadow-lg
-              prose-a:text-[#2563eb]
-              prose-strong:text-black
-              prose-blockquote:border-l-[#f97316] prose-blockquote:text-gray-700"
-            dangerouslySetInnerHTML={{
-              __html: article.content || "",
-            }}
-          />
+            {/* Blog Content */}
+            <div
+              className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[15px] sm:text-base text-gray-800 leading-relaxed font-medium space-y-6
+                prose-headings:text-[#0a192f] prose-headings:font-black
+                prose-p:text-gray-700 prose-p:leading-[2]
+                prose-img:rounded-2xl prose-img:shadow-lg
+                prose-a:text-[#2563eb]
+                prose-strong:text-black
+                prose-blockquote:border-l-[#f97316] prose-blockquote:text-gray-700"
+              dangerouslySetInnerHTML={{
+                __html: article.content || "",
+              }}
+            />
+
+            {/* Clear the float so container height calculates correctly */}
+            <div className="clear-both"></div>
+          </div>
         </article>
 
         {/* Share Section */}
