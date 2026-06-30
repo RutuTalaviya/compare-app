@@ -97,7 +97,7 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 120px;
+  height: 240px;
   background: linear-gradient(to top, #e6e7ee, rgba(230, 231, 238, 0));
   pointer-events: none;
 }

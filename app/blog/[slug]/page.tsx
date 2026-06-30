@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import { Send } from "lucide-react";
-import { getArticleDetails } from "../../services/articleService";
+import { Send, ChevronLeft, ChevronRight } from "lucide-react";
+import { getArticleDetails, getArticles } from "../../services/articleService";
 import { imageUrl } from "../../config";
 
 const authors = [
@@ -81,11 +81,27 @@ export default function BlogDetailsPage() {
 
   const [article, setArticle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
+  const [loadingRelated, setLoadingRelated] = useState(true);
+
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: -340, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: 340, behavior: "smooth" });
+    }
+  };
 
   const [randomAuthor] = useState(() => {
     const index = slug
       ? slug.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
-        authors.length
+      authors.length
       : 0;
     return authors[index];
   });
@@ -104,9 +120,25 @@ export default function BlogDetailsPage() {
     }
   };
 
+  const fetchRelatedArticles = async () => {
+    try {
+      setLoadingRelated(true);
+      const response = await getArticles(1, 20);
+      if (response?.status && Array.isArray(response.data)) {
+        const filtered = response.data.filter((item: any) => item.uniqueTitle !== slug);
+        setRelatedArticles(filtered);
+      }
+    } catch (error) {
+      console.log("Error fetching related articles:", error);
+    } finally {
+      setLoadingRelated(false);
+    }
+  };
+
   useEffect(() => {
     if (slug) {
       fetchArticleDetails();
+      fetchRelatedArticles();
     }
   }, [slug]);
 
@@ -140,12 +172,12 @@ export default function BlogDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#e8edf2] font-sans text-gray-800 flex flex-col">
+      <div className="min-h-screen bg-[#e6e7ee] font-sans text-gray-800 flex flex-col">
         <Navbar />
         <main className="flex-grow pt-20 px-5 md:px-8 w-full max-w-[1400px] mx-auto pb-16">
           <div className="animate-pulse">
             <div className="h-6 bg-gray-300/60 rounded w-1/4 mb-8" />
-            <div className="bg-[#e8edf2] rounded-3xl p-6 md:p-10 shadow-[8px_8px_16px_#cfd6e0,-8px_-8px_16px_#ffffff] border border-white/60">
+            <div className="bg-[#e6e7ee] rounded-3xl p-6 md:p-10 shadow-[8px_8px_16px_#b8c4d2,-8px_-8px_16px_#ffffff] border border-white/60">
               <div className="h-10 bg-gray-300/60 rounded w-3/4 mb-8" />
               <div className="h-6 bg-gray-300/60 rounded w-1/3 mb-10" />
 
@@ -171,14 +203,14 @@ export default function BlogDetailsPage() {
 
   if (!article) {
     return (
-      <div className="min-h-screen bg-[#e8edf2] font-sans text-gray-800 flex flex-col">
+      <div className="min-h-screen bg-[#e6e7ee] font-sans text-gray-800 flex flex-col">
         <Navbar />
         <main className="flex-grow pt-28 px-5 md:px-8 w-full max-w-[1400px] mx-auto pb-16 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
             <Link
               href="/blog"
-              className="text-[#f97316] font-bold hover:underline"
+              className="text-[#F98A1A] font-bold hover:underline"
             >
               Back to Blog
             </Link>
@@ -190,7 +222,7 @@ export default function BlogDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#e8edf2] font-sans text-gray-800 flex flex-col">
+    <div className="min-h-screen bg-[#e6e7ee] font-sans text-gray-800 flex flex-col">
       <Navbar />
 
       {/* Main Content Area */}
@@ -199,14 +231,14 @@ export default function BlogDetailsPage() {
         <div className="flex items-center gap-2 text-sm mb-6 tracking-widest uppercase font-medium">
           <Link
             href="/"
-            className="text-gray-400 hover:text-black transition-colors"
+            className="text-gray-400 hover:text-[#F98A1A] transition-colors"
           >
             Home
           </Link>
           <span className="text-gray-400">/</span>
           <Link
             href="/blog"
-            className="text-gray-400 hover:text-black transition-colors"
+            className="text-gray-400 hover:text-[#F98A1A] transition-colors"
           >
             Blogs
           </Link>
@@ -217,7 +249,7 @@ export default function BlogDetailsPage() {
         </div>
 
         {/* Main Neumorphic Card Container */}
-        <article className="bg-[#e8edf2] rounded-3xl p-6 md:p-10 shadow-[8px_8px_16px_#cfd6e0,-8px_-8px_16px_#ffffff] border border-white/60">
+        <article className="bg-[#e6e7ee] rounded-3xl p-6 md:p-10 shadow-[8px_8px_16px_#b8c4d2,-8px_-8px_16px_#ffffff] border border-white/60">
           {/* Blog Title */}
           <h1 className="text-3xl md:text-[42px] font-extrabold text-[#0a192f] leading-tight mb-6">
             {article.title}
@@ -232,7 +264,7 @@ export default function BlogDetailsPage() {
               <img
                 src={randomAuthor.avatar}
                 alt={randomAuthor.name}
-                className="w-11 h-11 rounded-full object-cover border-2 border-white/70 shadow-[3px_3px_6px_#cfd6e0,-3px_-3px_6px_#ffffff]"
+                className="w-11 h-11 rounded-full object-cover border-2 border-white/70 shadow-[3px_3px_6px_#b8c4d2,-3px_-3px_6px_#ffffff]"
               />
               <div className="flex flex-col">
                 <span className="text-sm font-bold text-[#0a192f]">
@@ -246,7 +278,7 @@ export default function BlogDetailsPage() {
 
             {/* Action Buttons Group */}
             <div className="flex flex-wrap items-center gap-3 md:gap-4">
-              <button className="flex items-center gap-2 px-4 py-2 bg-[#e8edf2] rounded-full shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all border border-white/40 text-xs sm:text-sm font-semibold text-gray-700">
+              <button className="flex items-center gap-2 px-4 py-2 bg-[#e6e7ee] rounded-full shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff] transition-all border border-white/40 text-xs sm:text-sm font-semibold text-gray-700">
                 <GoogleIcon className="w-4 h-4 text-[#DB4437]" />
                 Google preferred
               </button>
@@ -255,7 +287,7 @@ export default function BlogDetailsPage() {
                 href="https://whatsapp.com/channel/..."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-[#e8edf2] rounded-full shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all border border-white/40 text-xs sm:text-sm font-semibold text-gray-700"
+                className="flex items-center gap-2 px-4 py-2 bg-[#e6e7ee] rounded-full shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff] transition-all border border-white/40 text-xs sm:text-sm font-semibold text-gray-700"
               >
                 <WhatsAppIcon className="w-4 h-4 text-[#25D366]" />
                 Join WhatsApp channel
@@ -265,7 +297,7 @@ export default function BlogDetailsPage() {
                 href="https://t.me/..."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-[#e8edf2] rounded-full shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all border border-white/40 text-xs sm:text-sm font-semibold text-gray-700"
+                className="flex items-center gap-2 px-4 py-2 bg-[#e6e7ee] rounded-full shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff] transition-all border border-white/40 text-xs sm:text-sm font-semibold text-gray-700"
               >
                 <Send className="w-4 h-4 text-[#0088cc]" />
                 Join Telegram channel
@@ -276,7 +308,7 @@ export default function BlogDetailsPage() {
           {/* Floated Image and Text Wrapper */}
           <div className="block w-full">
             {article.thumbnail && (
-              <div className="w-full md:w-1/2 lg:w-5/12 md:float-left md:mr-8 mb-6 md:mb-4 rounded-2xl bg-[#e8edf2] shadow-[inset_4px_4px_8px_#cfd6e0,inset_-4px_-4px_8px_#ffffff] p-2 md:p-3">
+              <div className="w-full md:w-1/2 lg:w-5/12 md:float-left md:mr-8 mb-6 md:mb-4 rounded-2xl bg-[#e6e7ee] shadow-[inset_4px_4px_8px_#b8c4d2,inset_-4px_-4px_8px_#ffffff] p-2 md:p-3">
                 <img
                   src={getPostImageUrl(article.thumbnail)}
                   alt={article.title}
@@ -304,6 +336,67 @@ export default function BlogDetailsPage() {
           </div>
         </article>
 
+
+        {/* Related Articles Slider */}
+        {relatedArticles.length > 0 && (
+          <div className="mt-16 w-full">
+            <div className="mb-8">
+              <h2 className="text-2xl font-extrabold text-[#0a192f] flex items-center gap-2">
+                📚 Related Articles
+              </h2>
+            </div>
+            <div className="relative w-full">
+              {/* Left Button */}
+              <button
+                onClick={scrollLeft}
+                className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#e6e7ee] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2] flex items-center justify-center border border-[#d1d9e6]/50 text-[#313842] hover:text-[#F98A1A] transition-all duration-300 cursor-pointer"
+              >
+                <ChevronLeft size={20} />
+              </button>
+
+              {/* Slider Container */}
+              <div
+                ref={sliderRef}
+                className="flex overflow-x-auto gap-6 pb-6 px-2 scroll-smooth snap-x snap-mandatory scrollbar-none"
+                style={{
+                  msOverflowStyle: "none",
+                  scrollbarWidth: "none",
+                }}
+              >
+                {relatedArticles.map((item) => (
+                  <Link
+                    href={`/blog/${item.uniqueTitle}`}
+                    key={item._id}
+                    className="w-[280px] sm:w-[320px] shrink-0 snap-start group block cursor-pointer rounded-2xl bg-[#e6e7ee] shadow-[0_12px_30px_rgba(49,56,66,0.1)] p-4 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_22px_45px_rgba(49,56,66,0.18)] flex flex-col"
+                  >
+                    {/* Image Container */}
+                    <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden mb-4 bg-transparent">
+                      <img
+                        src={getPostImageUrl(item.thumbnail)}
+                        alt={item.title}
+                        className="w-full h-full object-cover rounded-xl transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+
+                    {/* Post Title */}
+                    <h3 className="text-[15px] sm:text-[16px] font-semibold leading-snug px-1 pb-1 text-[#313842] transition-colors duration-300 group-hover:text-[#F98A1A] line-clamp-2">
+                      {item.title}
+                    </h3>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Right Button */}
+              <button
+                onClick={scrollRight}
+                className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#e6e7ee] shadow-[3px_3px_6px_#b8c4d2,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2] flex items-center justify-center border border-[#d1d9e6]/50 text-[#313842] hover:text-[#F98A1A] transition-all duration-300 cursor-pointer"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Share Section */}
         <div className="mt-12 flex items-center justify-center gap-4">
           <span className="text-sm font-semibold text-gray-600 mr-2">
@@ -314,7 +407,7 @@ export default function BlogDetailsPage() {
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#25D366]"
+            className="w-10 h-10 rounded-full bg-[#e6e7ee] shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#25D366]"
           >
             <WhatsAppIcon className="w-5 h-5" />
           </a>
@@ -323,7 +416,7 @@ export default function BlogDetailsPage() {
             href={telegramUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#0088cc]"
+            className="w-10 h-10 rounded-full bg-[#e6e7ee] shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#0088cc]"
           >
             <Send className="w-4 h-4" />
           </a>
@@ -332,7 +425,7 @@ export default function BlogDetailsPage() {
             href={facebookUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#1877F2]"
+            className="w-10 h-10 rounded-full bg-[#e6e7ee] shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#1877F2]"
           >
             <FacebookIcon className="w-4 h-4" />
           </a>
@@ -341,11 +434,12 @@ export default function BlogDetailsPage() {
             href={twitterUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 rounded-full bg-[#e8edf2] shadow-[4px_4px_8px_#cfd6e0,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#cfd6e0,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#1DA1F2]"
+            className="w-10 h-10 rounded-full bg-[#e6e7ee] shadow-[4px_4px_8px_#b8c4d2,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#b8c4d2,inset_-2px_-2px_4px_#ffffff] transition-all flex items-center justify-center border border-white/50 text-[#1DA1F2]"
           >
             <TwitterIcon className="w-4 h-4" />
           </a>
         </div>
+
       </main>
 
       <Footer />

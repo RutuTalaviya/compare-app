@@ -73,10 +73,20 @@ export default function QuickCompare() {
 
   const handleCompare = () => {
     if (compareList.length < 2) {
-      DangerRight("Please add at least 2 products");
+      DangerRight("Please add at least 2 products to compare");
       return;
     }
-    const slug = compareList.map((item) => item.uniqueTitle).join(",");
+
+    // Sabhi selected products ke uniqueTitle ko comma se join karna
+    const slug = compareList
+      .map((item) => {
+        // Fallback: Agar uniqueTitle na ho, toh title ko slug bana dega
+        return (item as any).uniqueTitle || (item as any).uniqueName || (item.title ? item.title.toLowerCase().replace(/\s+/g, '-') : '');
+      })
+      .filter(Boolean)
+      .join(",");
+
+    // Ab URL properly unique titles ke sath banega
     router.push(`/compare/${slug}`);
   };
 
@@ -131,18 +141,19 @@ export default function QuickCompare() {
   };
 
   const handleAddCompare = (product: Product) => {
-    setCompareList((prev) => {
-      const exists = prev.find((p) => p._id === product._id);
-      if (exists) return prev;
+    console.log("PRODUCT BEING ADDED:", product);
+    const exists = compareList.find((p) => p._id === product._id);
+    if (exists) return;
 
-      // Limit to 4 products maximum
-      if (prev.length >= 4) {
-        DangerRight("You can only compare up to 4 products at a time.");
-        return prev;
-      }
+    // Limit to 4 products maximum
+    if (compareList.length >= 4) {
+      DangerRight("You can only compare up to 4 products at a time.");
+      return;
+    }
 
-      return [...prev, product];
-    });
+    const updated = [...compareList, product];
+    setCompareList(updated);
+    localStorage.setItem("quickCompareList", JSON.stringify(updated));
   };
 
   const handleRemoveCompare = (id: string) => {

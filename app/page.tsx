@@ -173,7 +173,7 @@ export default function Home() {
         </div>
 
         {/* Quick Compare Section */}
-        <div className="border border-[#d1d9e6] rounded-2xl bg-[#e6e7ee] shadow-soft overflow-hidden">
+        <div id="quick-compare" className="border border-[#d1d9e6] rounded-2xl bg-[#e6e7ee] shadow-soft overflow-hidden">
           <div className="border-b border-gray-300 bg-[#e6e7ee]/50 p-4 px-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="h-2.5 w-2.5 rounded-full bg-[#F98A1A] animate-ping" />
@@ -364,13 +364,6 @@ export default function Home() {
                   <ArrowRight className="h-5 w-5" />
                 </button>
               )}
-              <button
-                onClick={() => router.push("/quick-compare")}
-                className="px-8 py-3.5 text-sm sm:text-base font-black uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center gap-2 bg-[#e6e7ee] text-[#313842] border border-[#d1d9e6] shadow-soft hover:text-[#F98A1A] hover:shadow-[6px_6px_12px_#b8c4d2,_-6px_-6px_12px_#ffffff] active:shadow-[inset_2px_2px_4px_#b8c4d2] cursor-pointer"
-              >
-                {compareList.length >= 2 ? "Customize Compare" : "More Compare"}
-                <Plus className="h-5 w-5" />
-              </button>
             </div>
           </div>
         </div>
@@ -406,6 +399,11 @@ export default function Home() {
 
           {/* Blog / Articles Section */}
           <div className="my-10">
+            <div className="flex items-center justify-between border-b border-gray-300 pb-3 mb-6">
+              <h3 className="text-base sm:text-lg font-black text-[#313842] flex items-center gap-2">
+                📰 Blogs & Articles
+              </h3>
+            </div>
             <BlogPage showBreadcrumb={false} isInline={true} limit={16} />
           </div>
         </div>

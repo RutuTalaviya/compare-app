@@ -84,20 +84,26 @@ export default function SubCategoryUI() {
   };
 
   const handleAddCompare = (product: Product) => {
-    setCompareList((prev) => {
-      const exists = prev.find((p) => p._id === product._id);
-      if (exists) return prev;
-      return [...prev, product];
-    });
+    const exists = compareList.find((p) => p._id === product._id);
+    if (exists) return;
+
+    // Limit to 4 products maximum
+    if (compareList.length >= 4) {
+      DangerRight("You can only compare up to 4 products at a time.");
+      return;
+    }
+
+    const updated = [...compareList, product];
+    setCompareList(updated);
+    localStorage.setItem("quickCompareList", JSON.stringify(updated));
   };
 
   const handleCompare = () => {
     if (compareList.length < 2) {
-      DangerRight("Please add at least 2 products");
+      DangerRight("Please add at least 2 products to compare");
       return;
     }
-    const slug = compareList.map((item) => item.uniqueTitle).join(",");
-    router.push(`/compare/${slug}`);
+    router.push("/#quick-compare");
   };
 
   const handleRemoveCompare = (id: string) => {
